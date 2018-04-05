@@ -17,5 +17,6 @@ public interface PresetDao {
     @Query("DELETE FROM Presets")
     public void deleteAllPresets();
 
-
+    @Query("SELECT * FROM Presets")
+    public Preset[] loadAllPresets();
 }
