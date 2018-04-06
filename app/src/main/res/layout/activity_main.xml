@@ -5,9 +5,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< Updated upstream
-    tools:context="com.hundredacrewoods.pomodoroandroid.MainActivity">
-=======
     tools:context="com.hundredacrewoods.pomodoroandroid.activities.MainActivity">
 
     <FrameLayout
@@ -16,8 +13,6 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize">
     </FrameLayout>
->>>>>>> Stashed changes
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="0dp"
@@ -29,5 +24,4 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
-
 </android.support.constraint.ConstraintLayout>
