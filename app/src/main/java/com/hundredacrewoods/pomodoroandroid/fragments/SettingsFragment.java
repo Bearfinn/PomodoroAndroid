@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import com.hundredacrewoods.pomodoroandroid.R;
  * Created by nuuneoi on 11/16/2014.
  */
 @SuppressWarnings("unused")
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     TextView textView;
 
@@ -38,7 +39,10 @@ public class SettingsFragment extends PreferenceFragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+    }
 
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.settings_preference);
     }
 
@@ -47,6 +51,7 @@ public class SettingsFragment extends PreferenceFragment {
 //                             Bundle savedInstanceState) {
 //        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 //        initInstances(rootView, savedInstanceState);
+//
 //        return rootView;
 //    }
 
@@ -77,6 +82,7 @@ public class SettingsFragment extends PreferenceFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save Instance State here
+
     }
 
     /*

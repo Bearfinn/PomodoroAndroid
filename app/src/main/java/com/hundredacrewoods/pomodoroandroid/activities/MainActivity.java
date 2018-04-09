@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_settings:
-                    getFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction()
                             .replace(R.id.frame_fragmentholder, new SettingsFragment())
                             .commit();
                     return true;

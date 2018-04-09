@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RingtonePreference
-        android:defaultValue="1"
-        android:key="ringtone_preference_1"
-        android:title="@string/settings_ringtone"
-        android:selectable="true"
-        android:showDefault="true"
-        android:ringtoneType="alarm"/>
-    <SwitchPreference
+    <!--<RingtonePreference-->
+        <!--android:defaultValue="1"-->
+        <!--android:key="ringtone_preference_1"-->
+        <!--android:title="@string/settings_ringtone"-->
+        <!--android:selectable="true"-->
+        <!--android:showDefault="true"-->
+        <!--android:ringtoneType="alarm"/>-->
+    <android.support.v7.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="switch_preference_3"
         android:title="@string/settings_sound" />
-    <SwitchPreference
+    <android.support.v7.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="switch_preference_1"
         android:title="@string/settings_notification" />
-    <SwitchPreference
+    <android.support.v7.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="switch_preference_2"
         android:title="@string/settings_vibration" />
-    <Preference
+    <android.support.v7.preference.Preference
         android:title="@string/settings_clear_history"
         android:key="clear_history"
         />
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>
