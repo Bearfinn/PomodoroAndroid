@@ -1,6 +1,7 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +15,7 @@ import com.hundredacrewoods.pomodoroandroid.R;
  * Created by nuuneoi on 11/16/2014.
  */
 @SuppressWarnings("unused")
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragment {
 
     TextView textView;
 
@@ -37,15 +38,17 @@ public class SettingsFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        addPreferencesFromResource(R.xml.settings_preference);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
-        initInstances(rootView, savedInstanceState);
-        return rootView;
-    }
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+//        initInstances(rootView, savedInstanceState);
+//        return rootView;
+//    }
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
@@ -54,7 +57,7 @@ public class SettingsFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        //textView = rootView.findViewById(R.id.fragment_preset_textview);
     }
 
     @Override

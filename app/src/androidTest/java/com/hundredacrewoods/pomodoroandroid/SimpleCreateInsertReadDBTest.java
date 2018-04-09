@@ -4,6 +4,12 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroDatabase;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+import com.hundredacrewoods.pomodoroandroid.databases.PresetDao;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecordDao;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

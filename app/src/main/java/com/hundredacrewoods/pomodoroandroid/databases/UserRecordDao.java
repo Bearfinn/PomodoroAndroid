@@ -1,8 +1,10 @@
-package com.hundredacrewoods.pomodoroandroid;
+package com.hundredacrewoods.pomodoroandroid.databases;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
 import java.util.List;
 

@@ -12,4 +12,11 @@
     <string name="fragment_statistics_text">This is statistics fragment</string>
     <string name="fragment_timer_text">This is timer fragment</string>
     <string name="fragment_settings_text">This is settings fragment</string>
+
+    <!-- For Setting fragment string -->
+    <string name="settings_ringtone">Ringtone</string>
+    <string name="settings_sound">Sound</string>
+    <string name="settings_notification">Notification</string>
+    <string name="settings_vibration">Vibration</string>
+    <string name="settings_clear_history">Clear history</string>
 </resources>
