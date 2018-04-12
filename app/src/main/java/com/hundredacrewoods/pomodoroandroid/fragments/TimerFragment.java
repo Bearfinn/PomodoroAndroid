@@ -1,11 +1,14 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
@@ -16,7 +19,9 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
 
-    TextView textView;
+    int time;
+    TextView timerTextView;
+    Button startButton;
 
     public TimerFragment() {
         super();
@@ -49,12 +54,33 @@ public class TimerFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        time = 30;
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        timerTextView = rootView.findViewById(R.id.timer_textView);
+        startButton = rootView.findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Timer", "Button clicked!");
+                new CountDownTimer(30000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        long minutesLeft = (millisUntilFinished / 1000) / 60;
+                        long secondsLeft = (millisUntilFinished / 1000) % 60;
+                        String timeLeft = minutesLeft + ":" + secondsLeft;
+                        timerTextView.setText(timeLeft);
+                    }
+
+                    public void onFinish() {
+                        timerTextView.setText(R.string.timer_text);
+                    }
+                }.start();
+            }
+        });
     }
 
     @Override
