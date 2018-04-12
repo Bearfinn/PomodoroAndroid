@@ -19,7 +19,13 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
 
-    int time;
+    int shortBreakTime;
+    int longBreakTime;
+    int focusTime;
+    int currentStatus;
+    int shortBreakCount;
+    int shortBreakPerLongBreak;
+    TextView presetNameTextView;
     TextView timerTextView;
     Button startButton;
 
@@ -54,33 +60,75 @@ public class TimerFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        time = 30;
+        focusTime = 20;
+        shortBreakTime = 5;
+        longBreakTime = 15;
+        shortBreakCount = 0;
+        currentStatus = 0;
+        shortBreakPerLongBreak = 1;
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
+        presetNameTextView = rootView.findViewById(R.id.presetName_textView);
         timerTextView = rootView.findViewById(R.id.timer_textView);
         startButton = rootView.findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("Timer", "Button clicked!");
-                new CountDownTimer(30000, 1000) {
-
-                    public void onTick(long millisUntilFinished) {
-                        long minutesLeft = (millisUntilFinished / 1000) / 60;
-                        long secondsLeft = (millisUntilFinished / 1000) % 60;
-                        String timeLeft = minutesLeft + ":" + secondsLeft;
-                        timerTextView.setText(timeLeft);
-                    }
-
-                    public void onFinish() {
-                        timerTextView.setText(R.string.timer_text);
-                    }
-                }.start();
+                startTimer();
             }
         });
+    }
+
+    public void startTimer() {
+        Log.i("Timer", "Button clicked!");
+        int secondsInFuture = 0;
+        switch (currentStatus) {
+            case 0:
+                secondsInFuture = focusTime;
+                presetNameTextView.setText(R.string.focus_text);
+                break;
+            case 1:
+                secondsInFuture = shortBreakTime;
+                presetNameTextView.setText(R.string.short_break_text);
+                break;
+            case 2:
+                secondsInFuture = longBreakTime;
+                presetNameTextView.setText(R.string.long_break_text);
+                break;
+            default:
+                break;
+        }
+        new CountDownTimer(secondsInFuture * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                long minutesLeft = (millisUntilFinished / 1000) / 60;
+                long secondsLeft = (millisUntilFinished / 1000) % 60;
+                String timeLeft = minutesLeft + ":" + secondsLeft;
+                timerTextView.setText(timeLeft);
+            }
+
+            public void onFinish() {
+                switch (currentStatus) {
+                    case 0:
+                        if (shortBreakCount > shortBreakPerLongBreak) {
+                            currentStatus = 2;
+                            shortBreakCount = 0;
+                        } else {
+                            currentStatus = 1;
+                            shortBreakCount++;
+                        }
+                        startTimer();
+                        break;
+                    default:
+                        currentStatus = 0;
+                        startTimer();
+                }
+                timerTextView.setText(R.string.timer_text);
+            }
+        }.start();
     }
 
     @Override
