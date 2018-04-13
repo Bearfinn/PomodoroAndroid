@@ -1,11 +1,14 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
@@ -17,6 +20,8 @@ import com.hundredacrewoods.pomodoroandroid.R;
 public class TimerFragment extends Fragment {
 
     TextView textView;
+
+    Button mVibe;
 
     public TimerFragment() {
         super();
@@ -54,7 +59,19 @@ public class TimerFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
+
         textView = rootView.findViewById(R.id.fragment_preset_textview);
+        mVibe = rootView.findViewById(R.id.fragment_timer_vibe);
+        mVibe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mVibe == view) {
+                    Context context = getActivity().getApplicationContext();
+                    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(3000);
+                }
+            }
+        });
     }
 
     @Override

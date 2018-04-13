@@ -1,10 +1,19 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.SharedPreferencesCompat;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.SwitchPreferenceCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +27,24 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    TextView textView;
+//    TextView textView;
+    public static final String PREF_NOTI = "notification_preference";
+
+    public static final String PREF_SOUND = "sound_preference";
+
+    public static final String PREF_VIBE = "vibration_preference";
+
+    public static final String PREF_CLEAR_HIST = "clear_history_preference";
+
+    private SharedPreferences mSharedPreferences;
+
+    private SwitchPreferenceCompat mVibratorPreference;
+
+    private SwitchPreferenceCompat mNotificationPreference;
+
+    private SwitchPreferenceCompat mSoundPreference;
+
+    private Context mContext;
 
     public SettingsFragment() {
         super();
@@ -43,7 +69,42 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        mContext = this.getActivity().getApplicationContext();
         addPreferencesFromResource(R.xml.settings_preference);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        mNotificationPreference = (SwitchPreferenceCompat) findPreference(PREF_NOTI);
+        mSoundPreference = (SwitchPreferenceCompat) findPreference(PREF_SOUND);
+        mVibratorPreference = (SwitchPreferenceCompat) findPreference(PREF_VIBE);
+
+
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.
+                OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                boolean bool = sharedPreferences.getBoolean(s, false);
+                switch (s) {
+                    case PREF_NOTI :
+                        break;
+                    case PREF_SOUND :
+                        break;
+                    case PREF_VIBE :
+                        Vibrator vibrator = (Vibrator) mContext.getSystemService(
+                                Context.VIBRATOR_SERVICE);
+                        if(bool) {
+
+                        } else {
+
+                        }
+
+                        break;
+//                    case PREF_CLEAR_HIST :
+//                        Log.d("test", "Clear history was tapped");
+//                        break;
+                    default : break;
+                }
+            }
+        });
     }
 
 //    @Override

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -65,5 +66,6 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.frame_fragmentholder, timerFragment)
                     .commit();
         }
+        PreferenceManager.setDefaultValues(this, R.xml.settings_preference, false);
     }
 }
