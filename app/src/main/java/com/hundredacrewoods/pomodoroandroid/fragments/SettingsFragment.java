@@ -36,6 +36,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     public static final String PREF_CLEAR_HIST = "clear_history_preference";
 
+    private int mRingerMode;
+
     private SharedPreferences mSharedPreferences;
 
     private SwitchPreferenceCompat mVibratorPreference;
@@ -77,30 +79,31 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mSoundPreference = (SwitchPreferenceCompat) findPreference(PREF_SOUND);
         mVibratorPreference = (SwitchPreferenceCompat) findPreference(PREF_VIBE);
 
-
         mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.
                 OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 boolean bool = sharedPreferences.getBoolean(s, false);
+                AudioManager audioManager = (AudioManager) mContext.getSystemService(
+                        Context.AUDIO_SERVICE);
                 switch (s) {
                     case PREF_NOTI :
                         break;
-                    case PREF_SOUND :
-                        break;
                     case PREF_VIBE :
-                        Vibrator vibrator = (Vibrator) mContext.getSystemService(
-                                Context.VIBRATOR_SERVICE);
-                        if(bool) {
-
+                        if (bool) {
+                            audioManager.setRingerMode(mRingerMode);
                         } else {
-
+                            mRingerMode = audioManager.getRingerMode();
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                         }
-
                         break;
-//                    case PREF_CLEAR_HIST :
-//                        Log.d("test", "Clear history was tapped");
-//                        break;
+                    case PREF_SOUND :
+                        if (bool) {
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                        } else {
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                        }
+                        break;
                     default : break;
                 }
             }
