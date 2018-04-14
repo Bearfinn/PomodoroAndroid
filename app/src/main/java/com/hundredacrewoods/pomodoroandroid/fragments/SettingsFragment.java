@@ -4,20 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.SharedPreferencesCompat;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 
@@ -86,26 +79,40 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 boolean bool = sharedPreferences.getBoolean(s, false);
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(
                         Context.AUDIO_SERVICE);
+                String toastText = "";
                 switch (s) {
                     case PREF_NOTI :
+                        if (bool) {
+                            toastText = "turn on notification";
+                        } else {
+                            toastText = "turn off notification";
+                        }
                         break;
                     case PREF_VIBE :
                         if (bool) {
                             audioManager.setRingerMode(mRingerMode);
+                            toastText = "non-silent";
                         } else {
                             mRingerMode = audioManager.getRingerMode();
                             audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                            toastText = "silent";
                         }
                         break;
                     case PREF_SOUND :
                         if (bool) {
                             audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                            toastText = "sound";
                         } else {
                             audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                            toastText = "mute";
                         }
                         break;
                     default : break;
                 }
+                Toast toast = Toast.makeText(mContext, toastText, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM,
+                        0, 180);
+                toast.show();
             }
         });
     }
