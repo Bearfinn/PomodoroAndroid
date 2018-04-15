@@ -2,6 +2,7 @@ package com.hundredacrewoods.pomodoroandroid.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class PresetFragment extends Fragment {
 
-    TextView textView;
+    private FloatingActionButton mFloatingActionButton;
 
     public PresetFragment() {
         super();
@@ -54,7 +55,7 @@ public class PresetFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        mFloatingActionButton = rootView.findViewById(R.id.fragment_preset_add_button);
     }
 
     @Override
