@@ -119,15 +119,10 @@ public class AddingPresetFragment extends Fragment {
         mSavePresetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment editPresetNameFragment = new editPresetNameFragment();
+
+                EditPresetNameFragment editPresetNameFragment = new EditPresetNameFragment();
                 FragmentManager fragmentManager = AddingPresetFragment.super.getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(editPresetNameFragment, null);
-//                fragmentTransaction.replace(R.id.frame_fragmentholder,
-//                        addingPresetFragment);
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                editPresetNameFragment.show(fragmentManager, null);
             }
         });
 
