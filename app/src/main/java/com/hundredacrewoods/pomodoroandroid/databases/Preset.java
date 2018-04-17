@@ -15,68 +15,81 @@ import java.sql.Time;
 public class Preset {
     //Fields
     @PrimaryKey(autoGenerate = true)
-    private int presetID;
+    private int mPresetID;
+
+    @ColumnInfo(name = "presetName")
+    private String mPresetName;
 
     @ColumnInfo(name = "numShortPerLong")
-    private int numShortPerLong;
+    private int mNumShortPerLong;
 
     @ColumnInfo(name = "focusInMillis")
-    private long focusInMillis;
+    private long mFocusInMillis;
 
     @ColumnInfo(name = "shortInMillis")
-    private long shortInMillis;
+    private long mShortInMillis;
 
     @ColumnInfo(name = "longInMillis")
-    private long longInMillis;
+    private long mLongInMillis;
 
     @Ignore
     public Preset() {
     }
 
-    public Preset(long focusInMillis, long shortInMillis, long longInMillis, int numShortPerLong) {
-        this.focusInMillis = focusInMillis;
-        this.shortInMillis = shortInMillis;
-        this.longInMillis = longInMillis;
-        this.numShortPerLong = numShortPerLong;
+    public Preset(String presetName, long focusInMillis, long shortInMillis, long longInMillis,
+                  int numShortPerLong) {
+        this.mPresetName = presetName;
+        this.mFocusInMillis = focusInMillis;
+        this.mShortInMillis = shortInMillis;
+        this.mLongInMillis = longInMillis;
+        this.mNumShortPerLong = numShortPerLong;
     }
 
-    public int getPresetID() {
-        return presetID;
+    public int getmPresetID() {
+        return mPresetID;
     }
 
-    public void setPresetID(int presetID) {
-        this.presetID = presetID;
+    public void setmPresetID(int mPresetID) {
+        this.mPresetID = mPresetID;
     }
 
-    public int getNumShortPerLong() {
-        return numShortPerLong;
+    public String getmPresetName() {
+        return mPresetName;
     }
 
-    public void setNumShortPerLong(int numShortPerLong) {
-        this.numShortPerLong = numShortPerLong;
+    public void setmPresetName(String mPresetName) {
+        this.mPresetName = mPresetName;
     }
 
-    public long getFocusInMillis() {
-        return focusInMillis;
+    public int getmNumShortPerLong() {
+        return mNumShortPerLong;
     }
 
-    public void setFocusInMillis(long focusInMillis) {
-        this.focusInMillis = focusInMillis;
+    public void setmNumShortPerLong(int mNumShortPerLong) {
+        this.mNumShortPerLong = mNumShortPerLong;
     }
 
-    public long getShortInMillis() {
-        return shortInMillis;
+    public long getmFocusInMillis() {
+        return mFocusInMillis;
     }
 
-    public void setShortInMillis(long shortInMillis) {
-        this.shortInMillis = shortInMillis;
+    public void setmFocusInMillis(long mFocusInMillis) {
+        this.mFocusInMillis = mFocusInMillis;
     }
 
-    public long getLongInMillis() {
-        return longInMillis;
+    public long getmShortInMillis() {
+        return mShortInMillis;
     }
 
-    public void setLongInMillis(long longInMillis) {
-        this.longInMillis = longInMillis;
+    public void setmShortInMillis(long mShortInMillis) {
+        this.mShortInMillis = mShortInMillis;
+    }
+
+    public long getmLongInMillis() {
+        return mLongInMillis;
+    }
+
+    public void setmLongInMillis(long mLongInMillis) {
+        this.mLongInMillis = mLongInMillis;
     }
 }

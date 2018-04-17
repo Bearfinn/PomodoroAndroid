@@ -1,5 +1,6 @@
 package com.hundredacrewoods.pomodoroandroid.databases;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -18,5 +19,5 @@ public interface UserRecordDao {
     public void deleteAllUserRecords();
 
     @Query("SELECT * FROM UserRecords")
-    public List<UserRecord> loadAllUserRecords();
+    public LiveData<List<UserRecord>> selectAllUserRecords();
 }

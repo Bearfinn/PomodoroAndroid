@@ -1,5 +1,6 @@
 package com.hundredacrewoods.pomodoroandroid.databases;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -20,5 +21,5 @@ public interface PresetDao {
     public void deleteAllPresets();
 
     @Query("SELECT * FROM Presets")
-    public List<Preset> loadAllPresets();
+    public LiveData<List<Preset>> selectAllPresets();
 }
