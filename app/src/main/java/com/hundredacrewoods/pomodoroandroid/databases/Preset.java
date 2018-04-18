@@ -45,51 +45,51 @@ public class Preset {
         this.mNumShortPerLong = numShortPerLong;
     }
 
-    public int getmPresetID() {
+    public int getPresetID() {
         return mPresetID;
     }
 
-    public void setmPresetID(int mPresetID) {
+    public void setPresetID(int mPresetID) {
         this.mPresetID = mPresetID;
     }
 
-    public String getmPresetName() {
+    public String getPresetName() {
         return mPresetName;
     }
 
-    public void setmPresetName(String mPresetName) {
+    public void setPresetName(String mPresetName) {
         this.mPresetName = mPresetName;
     }
 
-    public int getmNumShortPerLong() {
+    public int getNumShortPerLong() {
         return mNumShortPerLong;
     }
 
-    public void setmNumShortPerLong(int mNumShortPerLong) {
+    public void setNumShortPerLong(int mNumShortPerLong) {
         this.mNumShortPerLong = mNumShortPerLong;
     }
 
-    public long getmFocusInMillis() {
+    public long getFocusInMillis() {
         return mFocusInMillis;
     }
 
-    public void setmFocusInMillis(long mFocusInMillis) {
+    public void setFocusInMillis(long mFocusInMillis) {
         this.mFocusInMillis = mFocusInMillis;
     }
 
-    public long getmShortInMillis() {
+    public long getShortInMillis() {
         return mShortInMillis;
     }
 
-    public void setmShortInMillis(long mShortInMillis) {
+    public void setShortInMillis(long mShortInMillis) {
         this.mShortInMillis = mShortInMillis;
     }
 
-    public long getmLongInMillis() {
+    public long getLongInMillis() {
         return mLongInMillis;
     }
 
-    public void setmLongInMillis(long mLongInMillis) {
+    public void setLongInMillis(long mLongInMillis) {
         this.mLongInMillis = mLongInMillis;
     }
 }
