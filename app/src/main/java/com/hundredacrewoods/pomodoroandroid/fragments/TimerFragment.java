@@ -2,9 +2,11 @@ package com.hundredacrewoods.pomodoroandroid.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Vibrator;
+
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,15 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
 
-    TextView textView;
+    int shortBreakTime;
+    int longBreakTime;
+    int focusTime;
+    int currentStatus;
+    int shortBreakCount;
+    int shortBreakPerLongBreak;
+    TextView presetNameTextView;
+    TextView timerTextView;
+    Button startButton;
 
     Button mVibe;
 
@@ -54,24 +64,75 @@ public class TimerFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        focusTime = 20;
+        shortBreakTime = 5;
+        longBreakTime = 15;
+        shortBreakCount = 0;
+        currentStatus = 0;
+        shortBreakPerLongBreak = 1;
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-
-        //textView = rootView.findViewById(R.id.fragment_preset_textview);
-        mVibe = rootView.findViewById(R.id.fragment_timer_vibe);
-        mVibe.setOnClickListener(new View.OnClickListener() {
+        presetNameTextView = rootView.findViewById(R.id.presetName_textView);
+        timerTextView = rootView.findViewById(R.id.timer_textView);
+        startButton = rootView.findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mVibe == view) {
-                    Context context = getActivity().getApplicationContext();
-                    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(3000);
-                }
+                startTimer();
             }
         });
+    }
+
+    public void startTimer() {
+        Log.i("Timer", "Button clicked!");
+        int secondsInFuture = 0;
+        switch (currentStatus) {
+            case 0:
+                secondsInFuture = focusTime;
+                presetNameTextView.setText(R.string.focus_text);
+                break;
+            case 1:
+                secondsInFuture = shortBreakTime;
+                presetNameTextView.setText(R.string.short_break_text);
+                break;
+            case 2:
+                secondsInFuture = longBreakTime;
+                presetNameTextView.setText(R.string.long_break_text);
+                break;
+            default:
+                break;
+        }
+        new CountDownTimer(secondsInFuture * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                long minutesLeft = (millisUntilFinished / 1000) / 60;
+                long secondsLeft = (millisUntilFinished / 1000) % 60;
+                String timeLeft = minutesLeft + ":" + secondsLeft;
+                timerTextView.setText(timeLeft);
+            }
+
+            public void onFinish() {
+                switch (currentStatus) {
+                    case 0:
+                        if (shortBreakCount > shortBreakPerLongBreak) {
+                            currentStatus = 2;
+                            shortBreakCount = 0;
+                        } else {
+                            currentStatus = 1;
+                            shortBreakCount++;
+                        }
+                        startTimer();
+                        break;
+                    default:
+                        currentStatus = 0;
+                        startTimer();
+                }
+                timerTextView.setText(R.string.timer_text);
+            }
+        }.start();
     }
 
     @Override
