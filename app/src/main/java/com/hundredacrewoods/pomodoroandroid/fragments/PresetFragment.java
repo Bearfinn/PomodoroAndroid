@@ -1,8 +1,13 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +21,7 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class PresetFragment extends Fragment {
 
-    TextView textView;
+    private FloatingActionButton mFloatingActionButton;
 
     public PresetFragment() {
         super();
@@ -37,6 +42,7 @@ public class PresetFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
     }
 
     @Override
@@ -44,6 +50,19 @@ public class PresetFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_preset, container, false);
         initInstances(rootView, savedInstanceState);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment addingPresetFragment = new AddingPresetFragment();
+                FragmentManager fragmentManager = PresetFragment.super.getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_fragmentholder,
+                        addingPresetFragment);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
         return rootView;
     }
 
@@ -54,7 +73,7 @@ public class PresetFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        mFloatingActionButton = rootView.findViewById(R.id.fragment_preset_add_button);
     }
 
     @Override

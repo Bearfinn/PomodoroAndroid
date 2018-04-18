@@ -19,4 +19,10 @@
     <string name="settings_notification">Notification</string>
     <string name="settings_vibration">Vibration</string>
     <string name="settings_clear_history">Clear history</string>
+    <string name="adding_preset_focus">Focus time</string>
+    <string name="adding_preset_short">Short break time</string>
+    <string name="adding_preset_long">Long break time</string>
+    <string name="preset_focus_default">25 minutes</string>
+    <string name="preset_short_default">5 minutes</string>
+    <string name="preset_long_default">15 minutes</string>
 </resources>

@@ -60,7 +60,7 @@ public class TimerFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
 
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        //textView = rootView.findViewById(R.id.fragment_preset_textview);
         mVibe = rootView.findViewById(R.id.fragment_timer_vibe);
         mVibe.setOnClickListener(new View.OnClickListener() {
             @Override
