@@ -28,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
     private PomodoroViewModel mPomodoroViewModel;
 
+    public PomodoroViewModel getPomodoroViewModel() {
+        return mPomodoroViewModel;
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -85,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mPomodoroViewModel = ViewModelProviders.of(this).get(PomodoroViewModel.class);
-
         PreferenceManager.setDefaultValues(this, R.xml.settings_preference, false);
 
     }

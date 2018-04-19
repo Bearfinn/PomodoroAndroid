@@ -14,6 +14,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 
 public class AddingPresetFragment extends Fragment
         implements EditPresetNameFragment.EditPresetNameListner{
@@ -33,8 +35,6 @@ public class AddingPresetFragment extends Fragment
     private SeekBar mLongBreakTimeSeekBar;
 
     private Button mSavePresetButton;
-
-    private String mPresetName;
 
     public AddingPresetFragment () {
         super();
@@ -137,8 +137,17 @@ public class AddingPresetFragment extends Fragment
     }
 
     public void getSavedName(String name) {
-        mPresetName = name;
-        mFocusTimeTextView.setText(mPresetName);
+        long focusInMillis = (mFocusTimeSeekBar.getProgress() * 5 + 15) * 60 * 1000;
+        long shortInMillis = (mShortBreakTimeSeekBar.getProgress() + 1) * 60 * 1000;
+        long longInMillis = (mLongBreakTimeSeekBar.getProgress() * 3 + 5) * 1000;
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        Preset preset = new Preset(name, focusInMillis
+                , shortInMillis, longInMillis,3);
+
+        mainActivity.getPomodoroViewModel().insert(preset);
+        getFragmentManager().popBackStack();
     }
 
     private void init(Bundle savedInstanceState) {
