@@ -1,5 +1,6 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,10 @@ import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 
-public class AddingPresetFragment extends Fragment {
+public class AddingPresetFragment extends Fragment
+        implements EditPresetNameFragment.EditPresetNameListner{
+
+    public static final String TAG = "addingPresetFragmentTag";
 
     private TextView mFocusTimeTextView;
 
@@ -29,6 +33,8 @@ public class AddingPresetFragment extends Fragment {
     private SeekBar mLongBreakTimeSeekBar;
 
     private Button mSavePresetButton;
+
+    private String mPresetName;
 
     public AddingPresetFragment () {
         super();
@@ -122,11 +128,17 @@ public class AddingPresetFragment extends Fragment {
 
                 EditPresetNameFragment editPresetNameFragment = new EditPresetNameFragment();
                 FragmentManager fragmentManager = AddingPresetFragment.super.getFragmentManager();
-                editPresetNameFragment.show(fragmentManager, null);
+                editPresetNameFragment.show(fragmentManager, EditPresetNameFragment.TAG);
+
             }
         });
 
         return rootView;
+    }
+
+    public void getSavedName(String name) {
+        mPresetName = name;
+        mFocusTimeTextView.setText(mPresetName);
     }
 
     private void init(Bundle savedInstanceState) {

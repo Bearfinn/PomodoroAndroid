@@ -1,6 +1,7 @@
 package com.hundredacrewoods.pomodoroandroid.activities;
 
 import android.app.NotificationManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -13,6 +14,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.fragments.AddingPresetFragment;
+import com.hundredacrewoods.pomodoroandroid.fragments.EditPresetNameFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.PresetFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.SettingsFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.StatisticsFragment;
@@ -21,6 +25,8 @@ import com.hundredacrewoods.pomodoroandroid.fragments.TimerFragment;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
+
+    private PomodoroViewModel mPomodoroViewModel;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.frame_fragmentholder, timerFragment)
                     .commit();
         }
+
+        mPomodoroViewModel = ViewModelProviders.of(this).get(PomodoroViewModel.class);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings_preference, false);
 

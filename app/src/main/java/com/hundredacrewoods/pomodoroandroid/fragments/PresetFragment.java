@@ -57,7 +57,7 @@ public class PresetFragment extends Fragment {
                 FragmentManager fragmentManager = PresetFragment.super.getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frame_fragmentholder,
-                        addingPresetFragment);
+                        addingPresetFragment, AddingPresetFragment.TAG);
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
