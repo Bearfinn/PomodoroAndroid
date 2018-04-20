@@ -8,12 +8,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.adapter.PresetAdapter;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -22,6 +25,12 @@ import com.hundredacrewoods.pomodoroandroid.R;
 public class PresetFragment extends Fragment {
 
     private FloatingActionButton mFloatingActionButton;
+
+    private RecyclerView mRecyclerView;
+
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private RecyclerView.Adapter mAdapter;
 
     public PresetFragment() {
         super();
@@ -63,6 +72,12 @@ public class PresetFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
+        mRecyclerView.setHasFixedSize(true);
+        final PresetAdapter adapter = new PresetAdapter(getContext());
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         return rootView;
     }
 
@@ -74,6 +89,7 @@ public class PresetFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         mFloatingActionButton = rootView.findViewById(R.id.fragment_preset_add_button);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
     }
 
     @Override

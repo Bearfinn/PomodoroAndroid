@@ -7,6 +7,14 @@
     tools:context=".fragments.PresetFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_preset_add_button"
         android:layout_width="wrap_content"
@@ -17,4 +25,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
         app:fabSize="normal" />
+
 </FrameLayout>
