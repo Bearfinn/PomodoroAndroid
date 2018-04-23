@@ -1,5 +1,6 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +17,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.adapter.PresetAdapter;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+
+import java.util.List;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -31,6 +37,8 @@ public class PresetFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private RecyclerView.Adapter mAdapter;
+
+    private PomodoroViewModel mPomodoroViewModel;
 
     public PresetFragment() {
         super();
@@ -77,6 +85,16 @@ public class PresetFragment extends Fragment {
         final PresetAdapter adapter = new PresetAdapter(getContext());
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        MainActivity activity = (MainActivity) getActivity();
+        mPomodoroViewModel = activity.getPomodoroViewModel();
+
+        mPomodoroViewModel.getAllPresets().observe(getActivity(), new Observer<List<Preset>>() {
+            @Override
+            public void onChanged(@Nullable List<Preset> presets) {
+                adapter.setPresets(presets);
+            }
+        });
 
         return rootView;
     }

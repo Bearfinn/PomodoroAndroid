@@ -19,7 +19,7 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(R.layout.recycler_view, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.preset_item, parent, false);
         return new ViewHolder(itemView);
     }
 
@@ -58,5 +58,8 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-
+    public void setPresets(List<Preset> presets) {
+        mPresets = presets;
+        notifyDataSetChanged();
+    }
 }

@@ -18,7 +18,7 @@ public class PomodoroViewModel extends AndroidViewModel {
         mAllPresets = mPomodoroRepository.getAllPresets();
     }
 
-    public LiveData<List<Preset>> getmAllPresets() {
+    public LiveData<List<Preset>> getAllPresets() {
         return mAllPresets;
     }
 
