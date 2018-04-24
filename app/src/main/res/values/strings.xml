@@ -15,8 +15,8 @@
     <string name="preset_text">Pomodoro</string>
     <string name="timer_text">0:00</string>
     <string name="start_button_text">Start</string>
-    <string name="pause_button_text">Pause</string>
-    <string name="stop_button_text">Stop</string>
+    <string name="reset_button_text">Reset</string>
+    <string name="skip_button_text">Skip</string>
     <string name="short_break_text">Short Break</string>
     <string name="long_break_text">Long Break</string>
     <string name="focus_text">Focus Time!</string>
