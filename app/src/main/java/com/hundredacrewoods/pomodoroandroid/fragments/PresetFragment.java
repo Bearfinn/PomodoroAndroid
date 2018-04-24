@@ -70,7 +70,8 @@ public class PresetFragment extends Fragment {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment addingPresetFragment = new AddingPresetFragment();
+                Preset preset = new Preset();
+                Fragment addingPresetFragment = AddingPresetFragment.newInstance(preset);
                 FragmentManager fragmentManager = PresetFragment.super.getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frame_fragmentholder,

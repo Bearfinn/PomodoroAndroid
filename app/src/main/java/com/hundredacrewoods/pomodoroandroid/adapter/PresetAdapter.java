@@ -1,6 +1,10 @@
 package com.hundredacrewoods.pomodoroandroid.adapter;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,12 +12,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+import com.hundredacrewoods.pomodoroandroid.fragments.AddingPresetFragment;
+import com.hundredacrewoods.pomodoroandroid.fragments.PresetFragment;
 
 import java.util.List;
 
@@ -35,7 +44,13 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
         if (mPresets != null) {
             final Preset current = mPresets.get(position);
             holder.presetName.setText(current.getPresetName());
-            holder.presetID.setText("" + current.getPresetID());
+
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+            int color = generator.getColor("" + current.getPresetName());
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(current.getPresetName().
+                    substring(0, 1), color, 60);
+
+            holder.circle.setImageDrawable(drawable);
 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -49,8 +64,6 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
-                                case R.id.preset_popup_menu_edit:
-                                    return true;
                                 case R.id.preset_popup_menu_delete:
                                     mPresets.remove(current);
                                     MainActivity mainActivity = (MainActivity) mContext;
@@ -64,9 +77,26 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
                     return true;
                 }
             });
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Preset currentPreset = mPresets.get(position);
+                    Fragment addingPresetFragment = AddingPresetFragment.
+                            newInstance(currentPreset);
+                    FragmentManager fragmentManager =
+                            ((MainActivity) mContext).getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction =
+                            fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_fragmentholder,
+                            addingPresetFragment, AddingPresetFragment.TAG);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+            });
         } else {
             holder.presetName.setText("No preset");
-            holder.presetID.setText("No preset");
         }
     }
 
@@ -80,14 +110,14 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView presetName;
-        TextView presetID;
+        ImageView circle;
         View itemView;
 
         public ViewHolder (View itemView) {
             super(itemView);
             this.itemView = itemView;
-            presetName = (TextView) itemView.findViewById(R.id.presetNameText);
-            presetID = (TextView) itemView.findViewById(R.id.presetIDText);
+            presetName = (TextView) itemView.findViewById(R.id.preset_name_text);
+            circle = (ImageView) itemView.findViewById(R.id.primary_action);
         }
     }
 

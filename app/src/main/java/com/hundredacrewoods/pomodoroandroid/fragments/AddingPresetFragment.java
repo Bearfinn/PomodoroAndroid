@@ -36,14 +36,16 @@ public class AddingPresetFragment extends Fragment
 
     private Button mSavePresetButton;
 
-    public AddingPresetFragment () {
-        super();
-    }
+    private Preset mPreset;
+
+    public AddingPresetFragment () {super();}
+
 
     @SuppressWarnings("unused")
-    public static AddingPresetFragment newInstance() {
+    public static AddingPresetFragment newInstance(Preset preset) {
         AddingPresetFragment fragment = new AddingPresetFragment();
         Bundle args = new Bundle();
+        fragment.mPreset = preset;
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,6 +66,27 @@ public class AddingPresetFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_adding_preset, container,
                 false);
         initInstances(rootView, savedInstanceState);
+
+        boolean isEditing = false;
+        if(mPreset.getPresetName() != null) isEditing = true;
+
+        if(isEditing) {
+            int focusMinute = (int) ((mPreset.getFocusInMillis() / 60) / 1000);
+            int longMinute = (int) ((mPreset.getLongInMillis() / 60) / 1000);
+            int shortMinute = (int) ((mPreset.getShortInMillis() / 60) / 1000);
+
+            int focusProgress = (focusMinute - 15) / 5;
+            int longProgress = (longMinute - 5) / 5;
+            int shortProgress = shortMinute - 1;
+
+            mFocusTimeSeekBar.setProgress(focusProgress);
+            mShortBreakTimeSeekBar.setProgress(shortProgress);
+            mLongBreakTimeSeekBar.setProgress(longProgress);
+
+            mFocusTimeTextView.setText(focusMinute + "minutes");
+            mShortBreakTimeTextView.setText(shortMinute + "minutes");
+            mLongBreakTimeTextView.setText(longMinute + "minutes");
+        }
 
         mFocusTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -106,7 +129,7 @@ public class AddingPresetFragment extends Fragment
         mLongBreakTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                i = i * 3 + 5;
+                i = i * 5 + 5;
                 String text = String.valueOf(i) + " minutes";
                 mLongBreakTimeTextView.setText(text);
             }
@@ -139,7 +162,7 @@ public class AddingPresetFragment extends Fragment
     public void getSavedName(String name) {
         long focusInMillis = (mFocusTimeSeekBar.getProgress() * 5 + 15) * 60 * 1000;
         long shortInMillis = (mShortBreakTimeSeekBar.getProgress() + 1) * 60 * 1000;
-        long longInMillis = (mLongBreakTimeSeekBar.getProgress() * 3 + 5) * 1000;
+        long longInMillis = (mLongBreakTimeSeekBar.getProgress() * 5 + 5) * 60 * 1000;
 
         MainActivity mainActivity = (MainActivity) getActivity();
 
@@ -152,6 +175,7 @@ public class AddingPresetFragment extends Fragment
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+
     }
 
     @SuppressWarnings("UnusedParameters")
