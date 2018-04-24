@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.hundredacrewoods.pomodoroandroid.R;
 
 import java.util.Locale;
-import java.util.Timer;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -41,8 +40,8 @@ public class TimerFragment extends Fragment {
     TextView presetNameTextView;
     TextView timerTextView;
     Button startButton;
-    Button pauseButton;
-    Button stopButton;
+    Button resetButton;
+    Button skipButton;
 
     public TimerFragment() {
         super();
@@ -99,17 +98,27 @@ public class TimerFragment extends Fragment {
                 startButtonPressed();
             }
         });
-        pauseButton = rootView.findViewById(R.id.pause_button);
-        pauseButton.setOnClickListener(new View.OnClickListener() {
+        resetButton = rootView.findViewById(R.id.pause_button);
+        resetButton.setEnabled(false);
+        resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 resetTimer();
             }
         });
-        stopButton = rootView.findViewById(R.id.stop_button);
+        skipButton = rootView.findViewById(R.id.stop_button);
+        skipButton.setEnabled(false);
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                skipPhase();
+            }
+        });
     }
 
     public void startButtonPressed() {
+        resetButton.setEnabled(true);
+        skipButton.setEnabled(true);
         if (isTimerRunning) {
             Log.d("startButtonPressed", "pausing timer...");
             pauseTimer();
@@ -122,13 +131,11 @@ public class TimerFragment extends Fragment {
 
     public void pauseTimer() {
         countDownTimer.cancel();
-        this.startButton.setText("Continue");
+        this.startButton.setText(R.string.start_button_resume_text);
     }
 
     public void startTimer() {
-        int secondsInFuture = 0;
-        this.startButton.setText("Pause");
-
+        this.startButton.setText(R.string.start_button_pause_text);
         countDownTimer = new CountDownTimer(currentTimeLeftInMillis, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -151,6 +158,14 @@ public class TimerFragment extends Fragment {
         setTimerStatusParams(TimerStatus.FOCUS);
         shortBreakCount = 0;
         isTimerRunning = false;
+        resetButton.setEnabled(false);
+        skipButton.setEnabled(false);
+    }
+
+    public void skipPhase() {
+        countDownTimer.cancel();
+        changeTimerStatus();
+        startTimer();
     }
 
     void updateTimerText() {
@@ -193,6 +208,8 @@ public class TimerFragment extends Fragment {
         currentStatus = timerStatus;
         currentTimeLeftInMillis = timeInMillis;
         presetNameTextView.setText(stringResId);
+        startButton.setText(R.string.start_button_start_text);
+        updateTimerText();
     }
 
     @Override
@@ -211,7 +228,12 @@ public class TimerFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
         // Save Instance State here
+        outState.putInt("shortBreakCount", shortBreakCount);
+        outState.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
+        outState.putSerializable("currentStatus", currentStatus);
+        outState.putBoolean("isTimerRunning", isTimerRunning);
     }
 
     /*
@@ -219,7 +241,16 @@ public class TimerFragment extends Fragment {
      */
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
+        focusTime = 20000;
+        shortBreakTime = 5000;
+        longBreakTime = 15000;
+        shortBreakPerLongBreak = 1;
+
         // Restore Instance State here
+        shortBreakCount = (int) savedInstanceState.get("shortBreakCount");
+        currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
+        currentStatus = (TimerStatus) savedInstanceState.get("currentStatus");
+        isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
     }
 
 }
