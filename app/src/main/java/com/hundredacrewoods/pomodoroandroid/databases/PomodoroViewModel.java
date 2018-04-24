@@ -25,4 +25,8 @@ public class PomodoroViewModel extends AndroidViewModel {
     public void insert(Preset... presets) {
         mPomodoroRepository.insert(presets);
     }
+
+    public void delete(Integer... integers) {
+        mPomodoroRepository.delete(integers);
+    }
 }

@@ -24,9 +24,9 @@ public class EditPresetNameFragment extends DialogFragment {
 
     public static final String TAG = "editPresetNameFragment";
 
-    private EditPresetNameListner mCallback;
+    private EditPresetNameListener mCallback;
 
-    public interface EditPresetNameListner {
+    public interface EditPresetNameListener {
         void getSavedName(String name);
     }
 
@@ -77,7 +77,7 @@ public class EditPresetNameFragment extends DialogFragment {
         alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                EditPresetNameListner activity = (EditPresetNameListner) getFragmentManager().
+                EditPresetNameListener activity = (EditPresetNameListener) getFragmentManager().
                         findFragmentByTag(AddingPresetFragment.TAG);
                 activity.getSavedName(input.getText().toString());
             }

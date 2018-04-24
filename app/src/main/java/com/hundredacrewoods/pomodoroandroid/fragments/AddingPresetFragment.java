@@ -18,7 +18,7 @@ import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 
 public class AddingPresetFragment extends Fragment
-        implements EditPresetNameFragment.EditPresetNameListner{
+        implements EditPresetNameFragment.EditPresetNameListener{
 
     public static final String TAG = "addingPresetFragmentTag";
 

@@ -31,6 +31,24 @@ public class PomodoroRepository {
         new insertAsyncTask(mPresetDao).execute(presets);
     }
 
+    public void delete (Integer... integers) {
+        new deleteAsyncTask(mPresetDao).execute(integers);
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<Integer, Void, Void> {
+        private PresetDao mAsyncPresetDao;
+
+        deleteAsyncTask (PresetDao dao) {
+            mAsyncPresetDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            mAsyncPresetDao.deletePreset(integers[0].intValue());
+            return null;
+        }
+    }
+
     private static class insertAsyncTask extends AsyncTask<Preset, Void, Void> {
 
         private PresetDao mAsyncPresetDao;

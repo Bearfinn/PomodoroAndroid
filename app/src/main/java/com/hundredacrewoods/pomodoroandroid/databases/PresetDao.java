@@ -20,6 +20,9 @@ public interface PresetDao {
     @Query("DELETE FROM Presets")
     public void deleteAllPresets();
 
+    @Query("DELETE FROM Presets WHERE mPresetID = :presetID")
+    public void deletePreset(int presetID);
+
     @Query("SELECT * FROM Presets")
     public LiveData<List<Preset>> selectAllPresets();
 }

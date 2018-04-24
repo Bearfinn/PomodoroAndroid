@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, final int position) {
 
         if (mPresets != null) {
-            Preset current = mPresets.get(position);
+            final Preset current = mPresets.get(position);
             holder.presetName.setText(current.getPresetName());
             holder.presetID.setText("" + current.getPresetID());
 
@@ -52,7 +52,10 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
                                 case R.id.preset_popup_menu_edit:
                                     return true;
                                 case R.id.preset_popup_menu_delete:
-                                    
+                                    mPresets.remove(current);
+                                    MainActivity mainActivity = (MainActivity) mContext;
+                                    mainActivity.getPomodoroViewModel().
+                                            delete(new Integer(current.getPresetID()));
                                     return true;
                                 default: return false;
                             }
