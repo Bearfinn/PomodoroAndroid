@@ -6,7 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,8 +39,6 @@ public class AddingPresetFragment extends Fragment
 
     private SeekBar mLongBreakTimeSeekBar;
 
-    private Button mSavePresetButton;
-
     private Preset mPreset;
 
     public AddingPresetFragment () {super();}
@@ -58,6 +61,29 @@ public class AddingPresetFragment extends Fragment
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.adding_preset_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home :
+                getFragmentManager().popBackStack();
+                break;
+            case R.id.adding_preset_save_button :
+                EditPresetNameFragment editPresetNameFragment = new EditPresetNameFragment();
+                FragmentManager fragmentManager = AddingPresetFragment.super.getFragmentManager();
+                editPresetNameFragment.show(fragmentManager, EditPresetNameFragment.TAG);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -66,6 +92,11 @@ public class AddingPresetFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_adding_preset, container,
                 false);
         initInstances(rootView, savedInstanceState);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(mPreset.getPresetName() != null ? mPreset.getPresetName() : "New Preset");
+
 
         boolean isEditing = false;
         if(mPreset.getPresetName() != null) isEditing = true;
@@ -145,17 +176,6 @@ public class AddingPresetFragment extends Fragment
             }
         });
 
-        mSavePresetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                EditPresetNameFragment editPresetNameFragment = new EditPresetNameFragment();
-                FragmentManager fragmentManager = AddingPresetFragment.super.getFragmentManager();
-                editPresetNameFragment.show(fragmentManager, EditPresetNameFragment.TAG);
-
-            }
-        });
-
         return rootView;
     }
 
@@ -187,7 +207,6 @@ public class AddingPresetFragment extends Fragment
         mShortBreakTimeTextView = rootView.findViewById(R.id.shortBreakTimeText);
         mLongBreakTimeSeekBar = rootView.findViewById(R.id.longBreakTimeSlider);
         mLongBreakTimeTextView = rootView.findViewById(R.id.longBreakTimeText);
-        mSavePresetButton = rootView.findViewById(R.id.savePresetButton);
     }
 
     @Override
