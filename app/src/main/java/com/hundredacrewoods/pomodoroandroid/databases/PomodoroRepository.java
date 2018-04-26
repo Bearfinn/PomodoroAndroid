@@ -35,6 +35,10 @@ public class PomodoroRepository {
         new deleteAsyncTask(mPresetDao).execute(integers);
     }
 
+    public void update (Preset... presets) {
+        new updateAsyncTask(mPresetDao).execute(presets);
+    }
+
     private static class deleteAsyncTask extends AsyncTask<Integer, Void, Void> {
         private PresetDao mAsyncPresetDao;
 
@@ -60,6 +64,20 @@ public class PomodoroRepository {
         @Override
         protected Void doInBackground(final Preset... params) {
             mAsyncPresetDao.insertPresets(params);
+            return null;
+        }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Preset, Void, Void> {
+        private PresetDao mAsyncPresetDao;
+
+        updateAsyncTask (PresetDao dao) {
+            mAsyncPresetDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Preset... params) {
+            mAsyncPresetDao.updatePreset(params);
             return null;
         }
     }

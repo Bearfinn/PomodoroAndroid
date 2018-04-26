@@ -211,10 +211,19 @@ public class AddingPresetFragment extends Fragment
 
         MainActivity mainActivity = (MainActivity) getActivity();
 
-        Preset preset = new Preset(name, focusInMillis
-                , shortInMillis, longInMillis,3);
+        if(mIsEdit) {
+            mPreset.setPresetName(name);
+            mPreset.setFocusInMillis(focusInMillis);
+            mPreset.setShortInMillis(shortInMillis);
+            mPreset.setLongInMillis(longInMillis);
+            mPreset.setNumShortPerLong(mInterval);
+            mainActivity.getPomodoroViewModel().update(mPreset);
+        } else {
+            Preset preset = new Preset(name, focusInMillis
+                    , shortInMillis, longInMillis, mInterval);
+            mainActivity.getPomodoroViewModel().insert(preset);
+        }
 
-        mainActivity.getPomodoroViewModel().insert(preset);
         getFragmentManager().popBackStack();
     }
 
