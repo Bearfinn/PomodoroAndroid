@@ -59,8 +59,26 @@ public class StatisticsFragment extends Fragment {
         adapter.addFragment(new StatisticsFragmentMonth(), "Month");
         viewPager.setAdapter(adapter);
 
-        final   TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         return rootView;
     }
