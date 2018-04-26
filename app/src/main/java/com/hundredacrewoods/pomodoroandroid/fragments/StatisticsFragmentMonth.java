@@ -101,7 +101,7 @@ public class StatisticsFragmentMonth extends Fragment {
     }
 
     public void setCustomizationOnBarChart(){
-        monthLineChart.animateXY(3000, 3000);
+        monthLineChart.animateXY(1000, 1000);
         monthLineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(weekLabels));
         monthLineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         monthLineChart.getAxisRight().setEnabled(false);
