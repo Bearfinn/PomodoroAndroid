@@ -36,4 +36,17 @@
     <string name="preset_popup_menu_edit">edit</string>
     <string name="preset_popup_menu_delete">delete</string>
     <string name="adding_preset_save_button">Save</string>
+    <string name="adding_preset_long_after">Long break after</string>
+    <string name="adding_preset_default_interval">4 intervals</string>
+    <string-array name="long_break_after">
+        <item>2 intervals</item>
+        <item>3 intervals</item>
+        <item>4 intervals</item>
+        <item>5 intervals</item>
+        <item>6 intervals</item>
+        <item>7 intervals</item>
+        <item>8 intervals</item>
+        <item>9 intervals</item>
+        <item>10 intervals</item>
+    </string-array>
 </resources>
