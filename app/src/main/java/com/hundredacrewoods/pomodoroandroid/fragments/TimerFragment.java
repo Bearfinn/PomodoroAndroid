@@ -1,7 +1,12 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,14 +17,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimerService;
 
 import java.util.Locale;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
+
+    final String LOG_TAG = "TimerFragment";
 
     int shortBreakTime;
     int longBreakTime;
@@ -43,11 +48,29 @@ public class TimerFragment extends Fragment {
     Button resetButton;
     Button skipButton;
 
+    TimerService timerService;
+    boolean isBound;
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(LOG_TAG, "Service connected.");
+            TimerService.TimerServiceBinder binder = (TimerService.TimerServiceBinder) iBinder;
+            timerService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(LOG_TAG, "Service disconnected.");
+            timerService = null;
+            isBound = false;
+        }
+    };
+
     public TimerFragment() {
         super();
     }
 
-    @SuppressWarnings("unused")
     public static TimerFragment newInstance() {
         TimerFragment fragment = new TimerFragment();
         Bundle args = new Bundle();
@@ -86,7 +109,6 @@ public class TimerFragment extends Fragment {
         isTimerRunning = false;
     }
 
-    @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         presetNameTextView = rootView.findViewById(R.id.presetName_textView);
@@ -95,7 +117,7 @@ public class TimerFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startButtonPressed();
+                timerService.startButtonPressed();
             }
         });
         resetButton = rootView.findViewById(R.id.pause_button);
@@ -103,7 +125,7 @@ public class TimerFragment extends Fragment {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resetTimer();
+                timerService.resetTimer();
             }
         });
         skipButton = rootView.findViewById(R.id.stop_button);
@@ -111,7 +133,7 @@ public class TimerFragment extends Fragment {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                skipPhase();
+                timerService.skipPhase();
             }
         });
     }
@@ -215,6 +237,8 @@ public class TimerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Intent intent = new Intent(getActivity(), TimerService.class);
+        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.hundredacrewoods.pomodoroandroid;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -13,6 +14,8 @@ import com.hundredacrewoods.pomodoroandroid.fragments.TimerFragment;
 import java.util.Locale;
 
 public class TimerService extends Service {
+
+    final String LOG_TAG = "TimerService";
 
     int shortBreakTime;
     int longBreakTime;
@@ -30,6 +33,8 @@ public class TimerService extends Service {
 
     boolean isTimerRunning;
 
+    public IBinder mBinder;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int result = super.onStartCommand(intent, flags, startId);
@@ -40,6 +45,7 @@ public class TimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mBinder = new TimerServiceBinder();
         init();
     }
 
@@ -51,7 +57,13 @@ public class TimerService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
+    }
+
+    public class TimerServiceBinder extends Binder {
+        public TimerService getService() {
+            return TimerService.this;
+        }
     }
 
     @SuppressWarnings("unused")
