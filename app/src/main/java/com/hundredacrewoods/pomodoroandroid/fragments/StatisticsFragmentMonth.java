@@ -37,7 +37,7 @@ public class StatisticsFragmentMonth extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_statistics_month, container, false);
-        monthLineChart = (LineChart) rootView.findViewById(R.id.month_linechart);
+        monthLineChart = rootView.findViewById(R.id.month_linechart);
         loadData();
         addWeekLabel();
         setDataOnLineChart();

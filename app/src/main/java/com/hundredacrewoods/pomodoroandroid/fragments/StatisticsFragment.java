@@ -49,7 +49,7 @@ public class StatisticsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_statistics, container, false);
         initInstances(rootView, savedInstanceState);
 
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
 
         // Add Fragments to adapter one by one
@@ -59,7 +59,7 @@ public class StatisticsFragment extends Fragment {
         adapter.addFragment(new StatisticsFragmentMonth(), "Month");
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        final   TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         return rootView;
