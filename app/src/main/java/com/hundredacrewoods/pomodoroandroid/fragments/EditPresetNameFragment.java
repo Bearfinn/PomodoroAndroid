@@ -24,6 +24,8 @@ public class EditPresetNameFragment extends DialogFragment {
 
     public static final String TAG = "editPresetNameFragment";
 
+    private String mPresetName;
+
     private EditPresetNameListener mCallback;
 
     public interface EditPresetNameListener {
@@ -35,9 +37,10 @@ public class EditPresetNameFragment extends DialogFragment {
     }
 
     @SuppressWarnings("unused")
-    public static EditPresetNameFragment newInstance() {
+    public static EditPresetNameFragment newInstance(String presetName) {
         EditPresetNameFragment fragment = new EditPresetNameFragment();
         Bundle args = new Bundle();
+        fragment.mPresetName = presetName;
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,7 +74,8 @@ public class EditPresetNameFragment extends DialogFragment {
 
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText("Preset 1");
+        input.setText(mPresetName);
+        input.setSelection(mPresetName.length());
         alertDialogBuilder.setView(input);
 
         alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {

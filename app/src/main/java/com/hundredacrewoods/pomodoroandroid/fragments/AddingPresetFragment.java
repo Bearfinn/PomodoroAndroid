@@ -93,7 +93,9 @@ public class AddingPresetFragment extends Fragment
                 getFragmentManager().popBackStack();
                 break;
             case R.id.adding_preset_save_button :
-                EditPresetNameFragment editPresetNameFragment = new EditPresetNameFragment();
+                EditPresetNameFragment editPresetNameFragment =
+                        EditPresetNameFragment.newInstance(
+                                mIsEdit? mPreset.getPresetName() : "Preset 1");
                 FragmentManager fragmentManager = AddingPresetFragment.super.getFragmentManager();
                 editPresetNameFragment.show(fragmentManager, EditPresetNameFragment.TAG);
                 break;
@@ -110,7 +112,7 @@ public class AddingPresetFragment extends Fragment
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(mPreset.getPresetName() != null ? mPreset.getPresetName() : "New Preset");
+        actionBar.setTitle(mIsEdit ? mPreset.getPresetName() : "New Preset");
 
         if(this.mIsEdit) {
             int focusMinute = (int) ((mPreset.getFocusInMillis() / 60) / 1000);
