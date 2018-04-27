@@ -36,12 +36,8 @@ public class TimerFragment extends Fragment {
     int focusTime;
     int shortBreakPerLongBreak;
 
-    public enum TimerStatus {
-        FOCUS, LONG_BREAK, SHORT_BREAK
-    }
-
     CountDownTimer countDownTimer;
-    TimerStatus currentStatus;
+    TimerService.Status currentStatus;
     long currentTimeLeftInMillis;
     int shortBreakCount;
 
@@ -85,6 +81,13 @@ public class TimerFragment extends Fragment {
 
             currentTimeLeftInMillis = (long) bundle.get("currentTimeLeftInMillis");
             updateTimerText();
+
+            currentStatus = (TimerService.Status) bundle.get("currentStatus");
+            switch (currentStatus) {
+                case FOCUS: presetNameTextView.setText(R.string.focus_text); break;
+                case SHORT_BREAK: presetNameTextView.setText(R.string.short_break_text); break;
+                case LONG_BREAK: presetNameTextView.setText(R.string.long_break_text); break;
+            }
         }
     }
 
@@ -134,9 +137,6 @@ public class TimerFragment extends Fragment {
         }
     }
 
-    /*
-     * Save Instance State Here
-     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -147,10 +147,6 @@ public class TimerFragment extends Fragment {
         outState.putBoolean("isTimerRunning", isTimerRunning);
     }
 
-    /*
-     * Restore Instance State Here
-     */
-    @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         focusTime = 20000;
         shortBreakTime = 5000;
@@ -160,7 +156,7 @@ public class TimerFragment extends Fragment {
         // Restore Instance State here
         shortBreakCount = (int) savedInstanceState.get("shortBreakCount");
         currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
-        currentStatus = (TimerStatus) savedInstanceState.get("currentStatus");
+        currentStatus = (TimerService.Status) savedInstanceState.get("currentStatus");
         isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
     }
 
@@ -173,7 +169,7 @@ public class TimerFragment extends Fragment {
 
         shortBreakCount = 0;
         currentTimeLeftInMillis = focusTime;
-        currentStatus = TimerStatus.FOCUS;
+        currentStatus = TimerService.Status.FOCUS;
 
         isTimerRunning = false;
 
@@ -188,10 +184,13 @@ public class TimerFragment extends Fragment {
         presetNameTextView = rootView.findViewById(R.id.presetName_textView);
         timerTextView = rootView.findViewById(R.id.timer_textView);
         startButton = rootView.findViewById(R.id.start_button);
+        if (isTimerRunning) {
+            startButton.setText(R.string.start_button_pause_text);
+        }
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timerService.startButtonPressed();
+                startButtonPressed();
             }
         });
         resetButton = rootView.findViewById(R.id.pause_button);
@@ -199,7 +198,7 @@ public class TimerFragment extends Fragment {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timerService.resetTimer();
+                resetTimer();
             }
         });
         skipButton = rootView.findViewById(R.id.stop_button);
@@ -207,7 +206,7 @@ public class TimerFragment extends Fragment {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timerService.skipPhase();
+                skipPhase();
             }
         });
     }
@@ -216,99 +215,42 @@ public class TimerFragment extends Fragment {
     //region Self-defined Functions
 
     public void startButtonPressed() {
+        timerService.startButtonPressed();
         resetButton.setEnabled(true);
         skipButton.setEnabled(true);
         if (isTimerRunning) {
-            Log.d("startButtonPressed", "pausing timer...");
             pauseTimer();
         } else {
-            Log.d("startButtonPressed", "starting timer...");
             startTimer();
         }
         isTimerRunning = !isTimerRunning;
     }
 
     public void pauseTimer() {
-        countDownTimer.cancel();
         this.startButton.setText(R.string.start_button_resume_text);
     }
 
     public void startTimer() {
-        this.startButton.setText(R.string.start_button_pause_text);
-        countDownTimer = new CountDownTimer(currentTimeLeftInMillis, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                currentTimeLeftInMillis = millisUntilFinished;
-                updateTimerText();
-            }
-
-            public void onFinish() {
-                changeTimerStatus();
-                timerTextView.setText(R.string.timer_text);
-                startTimer();
-            }
-        }.start();
-
-        updateTimerText();
+        this.startButton.setText(R.string.start_button_pause_text);;
     }
 
     public void resetTimer() {
-        countDownTimer.cancel();
-        setTimerStatusParams(TimerStatus.FOCUS);
-        shortBreakCount = 0;
-        isTimerRunning = false;
+        timerService.resetTimer();
+        presetNameTextView.setText(R.string.focus_text);
+        startButton.setText(R.string.start_button_start_text);
         resetButton.setEnabled(false);
         skipButton.setEnabled(false);
+        isTimerRunning = false;
     }
 
     public void skipPhase() {
-        countDownTimer.cancel();
-        changeTimerStatus();
-        startTimer();
+        timerService.skipPhase();
     }
 
     void updateTimerText() {
         long minutesLeft = (currentTimeLeftInMillis / 1000) / 60;
         long secondsLeft = (currentTimeLeftInMillis / 1000) % 60;
         timerTextView.setText(String.format(Locale.getDefault(), "%d:%02d", minutesLeft, secondsLeft));
-    }
-
-    void changeTimerStatus() {
-        switch (currentStatus) {
-            case FOCUS:
-                if (shortBreakCount > shortBreakPerLongBreak) {
-                    setTimerStatusParams(TimerStatus.LONG_BREAK);
-                    shortBreakCount = 0;
-                } else {
-                    setTimerStatusParams(TimerStatus.SHORT_BREAK);
-                    shortBreakCount++;
-                }
-                break;
-            default:
-                setTimerStatusParams(TimerStatus.FOCUS);
-        }
-    }
-
-    void setTimerStatusParams(TimerStatus timerStatus) {
-        switch (timerStatus) {
-            case FOCUS:
-                setTimerStatusParams(timerStatus, focusTime, R.string.focus_text);
-                break;
-            case SHORT_BREAK:
-                setTimerStatusParams(timerStatus, shortBreakTime, R.string.short_break_text);
-                break;
-            case LONG_BREAK:
-                setTimerStatusParams(timerStatus, longBreakTime, R.string.long_break_text);
-                break;
-        }
-    }
-
-    void setTimerStatusParams(TimerStatus timerStatus, long timeInMillis, int stringResId) {
-        currentStatus = timerStatus;
-        currentTimeLeftInMillis = timeInMillis;
-        presetNameTextView.setText(stringResId);
-        startButton.setText(R.string.start_button_start_text);
-        updateTimerText();
     }
 
     //endregion
