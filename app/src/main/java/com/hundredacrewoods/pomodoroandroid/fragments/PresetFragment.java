@@ -1,14 +1,29 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.adapter.PresetAdapter;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+
+import java.util.List;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -16,7 +31,15 @@ import com.hundredacrewoods.pomodoroandroid.R;
 @SuppressWarnings("unused")
 public class PresetFragment extends Fragment {
 
-    TextView textView;
+    private FloatingActionButton mFloatingActionButton;
+
+    private RecyclerView mRecyclerView;
+
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private RecyclerView.Adapter mAdapter;
+
+    private PomodoroViewModel mPomodoroViewModel;
 
     public PresetFragment() {
         super();
@@ -44,6 +67,41 @@ public class PresetFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_preset, container, false);
         initInstances(rootView, savedInstanceState);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle("Preset");
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Preset preset = new Preset();
+                Fragment addingPresetFragment = AddingPresetFragment.newInstance(preset);
+                FragmentManager fragmentManager = PresetFragment.super.getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_fragmentholder,
+                        addingPresetFragment, AddingPresetFragment.TAG);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+        mRecyclerView.setHasFixedSize(true);
+        final PresetAdapter adapter = new PresetAdapter(getContext());
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        MainActivity activity = (MainActivity) getActivity();
+        mPomodoroViewModel = activity.getPomodoroViewModel();
+
+        mPomodoroViewModel.getAllPresets().observe(getActivity(), new Observer<List<Preset>>() {
+            @Override
+            public void onChanged(@Nullable List<Preset> presets) {
+                adapter.setPresets(presets);
+            }
+        });
+
         return rootView;
     }
 
@@ -54,7 +112,8 @@ public class PresetFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        textView = rootView.findViewById(R.id.fragment_preset_textview);
+        mFloatingActionButton = rootView.findViewById(R.id.fragment_preset_add_button);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
     }
 
     @Override

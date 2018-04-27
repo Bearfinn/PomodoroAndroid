@@ -1,4 +1,4 @@
-package com.hundredacrewoods.pomodoroandroid;
+package com.hundredacrewoods.pomodoroandroid.databases;
 
 import android.arch.persistence.room.TypeConverter;
 

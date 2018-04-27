@@ -1,11 +1,16 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+<<<<<<< HEAD
 import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+=======
+import android.content.Context;
+>>>>>>> a113f2f1d4d17748591425cd743c0f5a56b83ff0
 import android.os.Bundle;
+
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Message;
@@ -85,6 +90,8 @@ public class TimerFragment extends Fragment {
             }
         }
     }
+
+    Button mVibe;
 
     public TimerFragment() {
         super();
