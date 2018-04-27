@@ -7,6 +7,9 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,6 +26,8 @@ import java.util.Locale;
 
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
+
+    //region Variables
 
     final String LOG_TAG = "TimerFragment";
 
@@ -50,7 +55,8 @@ public class TimerFragment extends Fragment {
 
     TimerService timerService;
     boolean isBound;
-    ServiceConnection serviceConnection = new ServiceConnection() {
+
+    ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.d(LOG_TAG, "Service connected.");
@@ -67,6 +73,21 @@ public class TimerFragment extends Fragment {
         }
     };
 
+    //endregion
+
+    class IncomingHandler extends Handler
+    {
+        @Override
+        public void handleMessage(Message msg) {
+
+            Bundle bundle = msg.getData();
+            Log.d(LOG_TAG, "Message received.");
+
+            currentTimeLeftInMillis = (long) bundle.get("currentTimeLeftInMillis");
+            updateTimerText();
+        }
+    }
+
     public TimerFragment() {
         super();
     }
@@ -77,6 +98,8 @@ public class TimerFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    //region Overridden Functions
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,6 +118,52 @@ public class TimerFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(getActivity(), TimerService.class);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isBound) {
+            getActivity().unbindService(mServiceConnection);
+            isBound = false;
+        }
+    }
+
+    /*
+     * Save Instance State Here
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save Instance State here
+        outState.putInt("shortBreakCount", shortBreakCount);
+        outState.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
+        outState.putSerializable("currentStatus", currentStatus);
+        outState.putBoolean("isTimerRunning", isTimerRunning);
+    }
+
+    /*
+     * Restore Instance State Here
+     */
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        focusTime = 20000;
+        shortBreakTime = 5000;
+        longBreakTime = 15000;
+        shortBreakPerLongBreak = 1;
+
+        // Restore Instance State here
+        shortBreakCount = (int) savedInstanceState.get("shortBreakCount");
+        currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
+        currentStatus = (TimerStatus) savedInstanceState.get("currentStatus");
+        isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
+    }
+
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
         focusTime = 20000;
@@ -107,6 +176,11 @@ public class TimerFragment extends Fragment {
         currentStatus = TimerStatus.FOCUS;
 
         isTimerRunning = false;
+
+        Messenger messenger = new Messenger(new IncomingHandler());
+        Intent intent = new Intent(getActivity().getApplicationContext(), TimerService.class);
+        intent.putExtra("messenger", messenger);
+        getActivity().startService(intent);
     }
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
@@ -137,6 +211,9 @@ public class TimerFragment extends Fragment {
             }
         });
     }
+
+    //endregion
+    //region Self-defined Functions
 
     public void startButtonPressed() {
         resetButton.setEnabled(true);
@@ -234,47 +311,6 @@ public class TimerFragment extends Fragment {
         updateTimerText();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Intent intent = new Intent(getActivity(), TimerService.class);
-        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    /*
-     * Save Instance State Here
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        // Save Instance State here
-        outState.putInt("shortBreakCount", shortBreakCount);
-        outState.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
-        outState.putSerializable("currentStatus", currentStatus);
-        outState.putBoolean("isTimerRunning", isTimerRunning);
-    }
-
-    /*
-     * Restore Instance State Here
-     */
-    @SuppressWarnings("UnusedParameters")
-    private void onRestoreInstanceState(Bundle savedInstanceState) {
-        focusTime = 20000;
-        shortBreakTime = 5000;
-        longBreakTime = 15000;
-        shortBreakPerLongBreak = 1;
-
-        // Restore Instance State here
-        shortBreakCount = (int) savedInstanceState.get("shortBreakCount");
-        currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
-        currentStatus = (TimerStatus) savedInstanceState.get("currentStatus");
-        isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
-    }
+    //endregion
 
 }

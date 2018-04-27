@@ -6,6 +6,10 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -28,18 +32,22 @@ public class TimerService extends Service {
 
     CountDownTimer countDownTimer;
     TimerStatus currentStatus;
+    Thread updateTimerThread;
     long currentTimeLeftInMillis;
     int shortBreakCount;
 
     boolean isTimerRunning;
 
     public IBinder mBinder;
+    Messenger data;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int result = super.onStartCommand(intent, flags, startId);
+        data = intent.getParcelableExtra("messenger");
+        Log.d(LOG_TAG, "onStartCommand ran.");
+        updateTimerThread = new UpdateTimerThread();
         startTimer();
-        return result;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -128,8 +136,7 @@ public class TimerService extends Service {
     }
 
     void updateTimerText() {
-        long minutesLeft = (currentTimeLeftInMillis / 1000) / 60;
-        long secondsLeft = (currentTimeLeftInMillis / 1000) % 60;
+        updateTimerThread.start();
     }
 
     void changeTimerStatus() {
@@ -166,5 +173,28 @@ public class TimerService extends Service {
         currentStatus = timerStatus;
         currentTimeLeftInMillis = timeInMillis;
         updateTimerText();
+    }
+
+    String[] items = {"Lorem", "Ipsum", "Dolor", "Sit", "Amet"};
+
+    class UpdateTimerThread extends Thread {
+        @Override
+        public void run() {
+            Log.d(LOG_TAG, "UpdateTimerThread called.");
+            if (!isInterrupted()) {
+
+                Message msg = Message.obtain();
+                Bundle bundle = new Bundle();
+                bundle.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
+                msg.setData(bundle);
+                try {
+                    data.send(msg);
+                    Log.d(LOG_TAG, "Message sent back to TimerFragment.");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                SystemClock.sleep(1000);
+            }
+        }
     }
 }
