@@ -25,7 +25,7 @@ public class StatisticsFragmentMonth extends Fragment {
     private LineChart monthLineChart;
     List<Entry> successPomo;
     List<Entry> failedPomo;
-    List<String> weekLabels;
+    List<String> monthLabels;
 
     public StatisticsFragmentMonth(){
 
@@ -39,7 +39,7 @@ public class StatisticsFragmentMonth extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_statistics_month, container, false);
         monthLineChart = rootView.findViewById(R.id.month_linechart);
         loadData();
-        addWeekLabel();
+        addMonthLabel();
         setDataOnLineChart();
         setCustomizationOnBarChart();
         return rootView;
@@ -65,31 +65,37 @@ public class StatisticsFragmentMonth extends Fragment {
         failedPomo.add(new Entry(6f,4f));
     }
 
-    public void addWeekLabel(){
-        weekLabels = new ArrayList<>();
-        weekLabels.add("Mon");
-        weekLabels.add("Tue");
-        weekLabels.add("Wed");
-        weekLabels.add("Thu");
-        weekLabels.add("Fri");
-        weekLabels.add("Sat");
-        weekLabels.add("Sun");
+    public void addMonthLabel(){
+        monthLabels = new ArrayList<>();
+        monthLabels.add("Jan");
+        monthLabels.add("Feb");
+        monthLabels.add("Mar");
+        monthLabels.add("Apr");
+        monthLabels.add("May");
+        monthLabels.add("Jun");
+        monthLabels.add("Jul");
+        monthLabels.add("Aug");
+        monthLabels.add("Sep");
+        monthLabels.add("Oct");
+        monthLabels.add("Nov");
+        monthLabels.add("Dec");
+
     }
 
     public void setDataOnLineChart(){
         LineDataSet dataSet1 = new LineDataSet(successPomo, "Success Pomodoro");
-        dataSet1.setColor(Color.rgb(117, 117,117));
+        dataSet1.setColor(Color.rgb(255, 193, 7));
         dataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet1.setLineWidth(3f);
         dataSet1.setCircleRadius(10f);
-        dataSet1.setCircleColor(Color.rgb(255, 193, 7));
+        dataSet1.setCircleColor(Color.rgb(117,117,117));
 
         LineDataSet dataSet2 = new LineDataSet(failedPomo, "Failed Pomodoro");
-        dataSet2.setColor(Color.rgb(117,117,117));
+        dataSet2.setColor(Color.rgb(255, 87, 34));
         dataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet2.setLineWidth(3f);
         dataSet2.setCircleRadius(10f);
-        dataSet2.setCircleColor(Color.rgb(255, 87, 34));
+        dataSet2.setCircleColor(Color.rgb(117,117,117));
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(dataSet1);
@@ -102,12 +108,14 @@ public class StatisticsFragmentMonth extends Fragment {
 
     public void setCustomizationOnBarChart(){
         monthLineChart.animateXY(1000, 1000);
-        monthLineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(weekLabels));
+        monthLineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(monthLabels));
         monthLineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         monthLineChart.getAxisRight().setEnabled(false);
         monthLineChart.getAxisLeft().setDrawGridLines(false);
         monthLineChart.getXAxis().setDrawGridLines(false);
         monthLineChart.getDescription().setEnabled(false);
+        monthLineChart.setVisibleXRangeMaximum(6);
+        monthLineChart.moveViewToX(6);
     }
 
 }

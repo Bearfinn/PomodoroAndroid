@@ -22,6 +22,11 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class StatisticsFragment extends Fragment {
 
+    private View rootView;
+    private ViewPager viewPager;
+    private ViewPagerAdapter adapter;
+    private TabLayout tabLayout;
+
     public StatisticsFragment() {
         super();
     }
@@ -46,11 +51,21 @@ public class StatisticsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        rootView = inflater.inflate(R.layout.fragment_statistics, container, false);
         initInstances(rootView, savedInstanceState);
 
-        final ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.pager);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+        return rootView;
+    }
+
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        viewPager = rootView.findViewById(R.id.pager);
+        adapter = new ViewPagerAdapter(getFragmentManager());
 
         // Add Fragments to adapter one by one
         adapter.addFragment(new StatisticsFragmentOverall(), "Overall");
@@ -59,7 +74,8 @@ public class StatisticsFragment extends Fragment {
         adapter.addFragment(new StatisticsFragmentMonth(), "Month");
         viewPager.setAdapter(adapter);
 
-        final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        tabLayout = rootView.findViewById(R.id.tabs);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setupWithViewPager(viewPager);
 
@@ -76,20 +92,9 @@ public class StatisticsFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                viewPager.setCurrentItem(tab.getPosition());
             }
         });
-
-        return rootView;
-    }
-
-    private void init(Bundle savedInstanceState) {
-        // Init Fragment level's variable(s) here
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    private void initInstances(View rootView, Bundle savedInstanceState) {
-        // Init 'View' instance(s) with rootView.findViewById here
     }
 
     @Override

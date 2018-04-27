@@ -60,7 +60,7 @@ public class StatisticsFragmentOverall extends Fragment{
     }
 
     public void customizePieChart(){
-        mPieChart.setHoleRadius(0);
+        mPieChart.setHoleRadius(30);
         mPieChart.setTransparentCircleRadius(0);
         mPieChart.setUsePercentValues(true);
         mPieChart.animateXY(1500,1000);
