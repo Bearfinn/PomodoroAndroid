@@ -20,8 +20,8 @@ public interface UserRecordDao {
     public void deleteAllUserRecords();
 
     @Query("SELECT * FROM UserRecords")
-    public List<UserRecord> selectAllUserRecords();
+    public LiveData<List<UserRecord>> selectAllUserRecords();
 
-    @Query("SELECT * FROM UserRecords WHERE :from >= startDateTime AND :to <= endDateTime")
-    public List<UserRecord> selectUserRecords(Timestamp from, Timestamp to);
+    @Query("SELECT * FROM UserRecords WHERE startDateTime >= :from AND endDateTime <= :to")
+    public LiveData<List<UserRecord>> selectUserRecords(Timestamp from, Timestamp to);
 }

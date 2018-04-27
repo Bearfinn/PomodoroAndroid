@@ -4,6 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import com.hundredacrewoods.pomodoroandroid.TimestampRange;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +20,14 @@ public class PomodoroRepository {
 
     private LiveData<List<UserRecord>> mSelectedUserRecords;
 
+    private LiveData<TimestampRange> filterLiveData;
+
     public PomodoroRepository(Application application) {
         PomodoroDatabase db = PomodoroDatabase.getInstance(application);
         mPresetDao = db.presetDao();
         mUserRecordDao = db.userRecordDao();
         mAllPresets = mPresetDao.selectAllPresets();
+        mSelectedUserRecords = mUserRecordDao.selectAllUserRecords();
     }
 
     public LiveData<List<Preset>> getAllPresets() {
@@ -45,8 +50,8 @@ public class PomodoroRepository {
         new insertUserRecordAsyncTask(mUserRecordDao).execute(userRecords);
     }
 
-    public List<UserRecord> selectUserRecords (Timestamp from, Timestamp to) {
-        return mUserRecordDao.selectUserRecords(from, to);
+    public LiveData<List<UserRecord>> selectUserRecords (TimestampRange timestampRange) {
+        return mUserRecordDao.selectUserRecords(timestampRange.getFrom(), timestampRange.getTo());
     }
 
     private static class deletePresetAsyncTask extends AsyncTask<Integer, Void, Void> {
