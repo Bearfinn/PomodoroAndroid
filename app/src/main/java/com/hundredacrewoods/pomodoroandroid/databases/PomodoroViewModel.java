@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class PomodoroViewModel extends AndroidViewModel {
@@ -32,5 +33,13 @@ public class PomodoroViewModel extends AndroidViewModel {
 
     public void deletePreset(Integer... integers) {
         mPomodoroRepository.deletePreset(integers);
+    }
+
+    public void insertUserRecord(UserRecord... userRecords) {
+        mPomodoroRepository.insertUserRecord(userRecords);
+    }
+
+    public List<UserRecord> selectUserRecords(Timestamp from, Timestamp to) {
+        return mPomodoroRepository.selectUserRecords(from, to);
     }
 }
