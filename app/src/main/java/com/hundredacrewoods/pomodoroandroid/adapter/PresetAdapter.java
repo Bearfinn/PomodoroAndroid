@@ -68,7 +68,7 @@ public class PresetAdapter extends RecyclerView.Adapter<PresetAdapter.ViewHolder
                                     mPresets.remove(current);
                                     MainActivity mainActivity = (MainActivity) mContext;
                                     mainActivity.getPomodoroViewModel().
-                                            delete(new Integer(current.getPresetID()));
+                                            deletePreset(new Integer(current.getPresetID()));
                                     return true;
                                 default: return false;
                             }

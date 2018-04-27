@@ -27,22 +27,22 @@ public class PomodoroRepository {
         return mAllPresets;
     }
 
-    public void insert (Preset... presets) {
-        new insertAsyncTask(mPresetDao).execute(presets);
+    public void insertPreset (Preset... presets) {
+        new insertPresetAsyncTask(mPresetDao).execute(presets);
     }
 
-    public void delete (Integer... integers) {
-        new deleteAsyncTask(mPresetDao).execute(integers);
+    public void deletePreset (Integer... integers) {
+        new deletePresetAsyncTask(mPresetDao).execute(integers);
     }
 
-    public void update (Preset... presets) {
-        new updateAsyncTask(mPresetDao).execute(presets);
+    public void updatePreset (Preset... presets) {
+        new updatePresetAsyncTask(mPresetDao).execute(presets);
     }
 
-    private static class deleteAsyncTask extends AsyncTask<Integer, Void, Void> {
+    private static class deletePresetAsyncTask extends AsyncTask<Integer, Void, Void> {
         private PresetDao mAsyncPresetDao;
 
-        deleteAsyncTask (PresetDao dao) {
+        deletePresetAsyncTask (PresetDao dao) {
             mAsyncPresetDao = dao;
         }
 
@@ -53,11 +53,11 @@ public class PomodoroRepository {
         }
     }
 
-    private static class insertAsyncTask extends AsyncTask<Preset, Void, Void> {
+    private static class insertPresetAsyncTask extends AsyncTask<Preset, Void, Void> {
 
         private PresetDao mAsyncPresetDao;
 
-        insertAsyncTask (PresetDao dao) {
+        insertPresetAsyncTask (PresetDao dao) {
             mAsyncPresetDao = dao;
         }
 
@@ -68,10 +68,10 @@ public class PomodoroRepository {
         }
     }
 
-    private static class updateAsyncTask extends AsyncTask<Preset, Void, Void> {
+    private static class updatePresetAsyncTask extends AsyncTask<Preset, Void, Void> {
         private PresetDao mAsyncPresetDao;
 
-        updateAsyncTask (PresetDao dao) {
+        updatePresetAsyncTask (PresetDao dao) {
             mAsyncPresetDao = dao;
         }
 
