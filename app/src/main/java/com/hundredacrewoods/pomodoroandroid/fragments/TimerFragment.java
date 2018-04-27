@@ -1,5 +1,6 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.Messenger;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,19 +33,12 @@ public class TimerFragment extends Fragment {
 
     final String LOG_TAG = "TimerFragment";
 
-    int shortBreakTime;
-    int longBreakTime;
-    int focusTime;
-    int shortBreakPerLongBreak;
-
-    CountDownTimer countDownTimer;
     TimerService.Status currentStatus;
     long currentTimeLeftInMillis;
-    int shortBreakCount;
-
     boolean isTimerRunning;
 
     TextView presetNameTextView;
+    TextView timerStatusTextView;
     TextView timerTextView;
     Button startButton;
     Button resetButton;
@@ -84,9 +79,9 @@ public class TimerFragment extends Fragment {
 
             currentStatus = (TimerService.Status) bundle.get("currentStatus");
             switch (currentStatus) {
-                case FOCUS: presetNameTextView.setText(R.string.focus_text); break;
-                case SHORT_BREAK: presetNameTextView.setText(R.string.short_break_text); break;
-                case LONG_BREAK: presetNameTextView.setText(R.string.long_break_text); break;
+                case FOCUS: timerStatusTextView.setText(R.string.focus_text); break;
+                case SHORT_BREAK: timerStatusTextView.setText(R.string.short_break_text); break;
+                case LONG_BREAK: timerStatusTextView.setText(R.string.long_break_text); break;
             }
         }
     }
@@ -141,20 +136,13 @@ public class TimerFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save Instance State here
-        outState.putInt("shortBreakCount", shortBreakCount);
         outState.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
         outState.putSerializable("currentStatus", currentStatus);
         outState.putBoolean("isTimerRunning", isTimerRunning);
     }
 
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-        focusTime = 20000;
-        shortBreakTime = 5000;
-        longBreakTime = 15000;
-        shortBreakPerLongBreak = 1;
-
         // Restore Instance State here
-        shortBreakCount = (int) savedInstanceState.get("shortBreakCount");
         currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
         currentStatus = (TimerService.Status) savedInstanceState.get("currentStatus");
         isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
@@ -162,13 +150,7 @@ public class TimerFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        focusTime = 20000;
-        shortBreakTime = 5000;
-        longBreakTime = 15000;
-        shortBreakPerLongBreak = 1;
-
-        shortBreakCount = 0;
-        currentTimeLeftInMillis = focusTime;
+        currentTimeLeftInMillis = 0;
         currentStatus = TimerService.Status.FOCUS;
 
         isTimerRunning = false;
@@ -182,6 +164,7 @@ public class TimerFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         presetNameTextView = rootView.findViewById(R.id.presetName_textView);
+        timerStatusTextView = rootView.findViewById(R.id.timerStatus_textView);
         timerTextView = rootView.findViewById(R.id.timer_textView);
         startButton = rootView.findViewById(R.id.start_button);
         if (isTimerRunning) {
@@ -209,6 +192,7 @@ public class TimerFragment extends Fragment {
                 skipPhase();
             }
         });
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_timer);
     }
 
     //endregion
@@ -236,7 +220,7 @@ public class TimerFragment extends Fragment {
 
     public void resetTimer() {
         timerService.resetTimer();
-        presetNameTextView.setText(R.string.focus_text);
+        timerStatusTextView.setText(R.string.focus_text);
         startButton.setText(R.string.start_button_start_text);
         resetButton.setEnabled(false);
         skipButton.setEnabled(false);

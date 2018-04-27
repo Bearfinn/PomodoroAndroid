@@ -22,4 +22,5 @@
     <string name="short_break_text">Short Break</string>
     <string name="long_break_text">Long Break</string>
     <string name="focus_text">Focus Time!</string>
+    <string name="timer_status_text">Focus TIme!</string>
 </resources>
