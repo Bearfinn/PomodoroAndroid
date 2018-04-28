@@ -8,13 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimestampRange;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class StatisticsFragmentOverall extends Fragment{
 
@@ -22,23 +31,42 @@ public class StatisticsFragmentOverall extends Fragment{
     private ArrayList<PieEntry> input;
     private int[] MY_COLORS = {Color.rgb(255,193,7), Color.rgb(189,189,189)};
 
+    private PomodoroViewModel mPomodoroViewModel;
+
     public  StatisticsFragmentOverall(){
 
     }
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_statistics_overall, container, false);
         mPieChart = rootView.findViewById(R.id.overall_piechart);
 
-        loadData();
-        addDataToPieChart();
-        customizePieChart();
+        mPomodoroViewModel.getAllUserRecords().observe(getActivity(), userRecords -> {
+            loadData(userRecords);
+            addDataToPieChart();
+            customizePieChart();
+        });
 
         return rootView;
+    }
+
+    public void loadData(List<UserRecord> userRecords) {
+        input = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        int sumSuccess = 0, sumFailure = 0;
+
+        for(UserRecord userRecord: userRecords) {
+            sumSuccess += userRecord.getNumSuccess();
+            sumFailure += userRecord.getNumFailure();
+        }
+
+        input.add(new PieEntry((float) sumSuccess, "Successful Pomodoro"));
+        input.add(new PieEntry((float) sumFailure, "Failed Pomodoro"));
     }
 
     public void loadData(){

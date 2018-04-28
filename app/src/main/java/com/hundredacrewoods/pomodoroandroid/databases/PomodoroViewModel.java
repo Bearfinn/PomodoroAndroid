@@ -23,12 +23,15 @@ public class PomodoroViewModel extends AndroidViewModel {
 
     private LiveData<List<UserRecord>> mSelectedUserRecords;
 
+    private LiveData<List<UserRecord>> mAllUserRecords;
+
     private MutableLiveData<TimestampRange> filterSearch = new MutableLiveData<TimestampRange>();
 
     public PomodoroViewModel (Application application) {
         super(application);
         mPomodoroRepository = new PomodoroRepository(application);
         mAllPresets = mPomodoroRepository.getAllPresets();
+        mAllUserRecords = mPomodoroRepository.getAllUserRecords();
         mSelectedUserRecords = Transformations.switchMap(filterSearch, filter -> mPomodoroRepository.selectUserRecords(filter));
     }
 
@@ -54,6 +57,10 @@ public class PomodoroViewModel extends AndroidViewModel {
 
     public LiveData<List<UserRecord>> selectUserRecords() {
         return mSelectedUserRecords;
+    }
+
+    public LiveData<List<UserRecord>> getAllUserRecords() {
+        return mAllUserRecords;
     }
 
     public void setFilterSearch (TimestampRange timestampRange) {

@@ -73,8 +73,7 @@ public class StatisticsFragmentWeek extends Fragment {
     public void loadData(List<UserRecord> userRecords) {
         successPomo = new ArrayList<>();
         failedPomo = new ArrayList<>();
-        Map<Integer, Integer> aggregateSuccess = new HashMap<Integer, Integer>();
-        Map<Integer, Integer> aggregateFailure = new HashMap<Integer, Integer>();
+
         Calendar calendar = Calendar.getInstance();
 
         userRecords.stream().collect(Collectors.groupingBy(userRecord -> {
