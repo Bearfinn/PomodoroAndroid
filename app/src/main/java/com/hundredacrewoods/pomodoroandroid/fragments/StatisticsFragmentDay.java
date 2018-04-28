@@ -1,8 +1,11 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +19,17 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimestampRange;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class StatisticsFragmentDay extends Fragment {
 
@@ -27,59 +38,107 @@ public class StatisticsFragmentDay extends Fragment {
     List<Entry> failedPomo;
     List<String> timeLabels;
 
+    LineDataSet dataSet1;
+    LineDataSet dataSet2;
+
+    private PomodoroViewModel mPomodoroViewModel;
+
     public StatisticsFragmentDay(){
 
     }
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_statistics_today, container, false);
         mLineChart = rootView.findViewById(R.id.month_linechart);
-        loadData();
-        addTimeLabel();
-        setDataOnLineChart();
-        setCustomizationOnBarChart();
+        Log.d("test", "Current time in view is " + System.currentTimeMillis());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        Log.d("test", "Current time before is " + calendar.getTimeInMillis());
+        //calendar.setTimeZone(TimeZone.getDefault());
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        Log.d("test", "Current time before set is " + day + "/" + month + "/" + year);
+        calendar.set(year, month, day, 0, 0, 0);
+        Log.d("test", "Current time in Calendar is " + calendar.getTimeInMillis());
+        Timestamp startDate = new Timestamp(calendar.getTimeInMillis());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Timestamp endDate = new Timestamp(calendar.getTimeInMillis());
+        Log.d("test", "Start timestamp of today: " + startDate.getTime());
+        Log.d("test", "End timestamp of today: " + endDate.getTime());
+        TimestampRange timestampRange = new TimestampRange(startDate, endDate);
+
+        mPomodoroViewModel.selectUserRecords().observe(getActivity(), userRecords -> {
+            Log.d("test", "user records are updated");
+            Log.d("test", userRecords.size() + " size");
+            loadData(userRecords);
+            //loadData();
+            addTimeLabel();
+            setDataOnLineChart();
+            setCustomizationOnBarChart();
+        });
+        Log.d("test", "onCreateView");
+        mPomodoroViewModel.setFilterSearch(timestampRange);
+//        loadData();
+//        addTimeLabel();
+//        setDataOnLineChart();
+//        setCustomizationOnBarChart();
         return rootView;
     }
 
-    public void loadData(){
+    public void loadData(List<UserRecord> userRecords) {
         successPomo = new ArrayList<>();
-        // x-axis == hour
-        // x=3 is equal to 3.00am
-        successPomo.add(new Entry(3f, 6f));
-        successPomo.add(new Entry(3f, 7f));
-        successPomo.add(new Entry(6f, 8f));
-        successPomo.add(new Entry(5f, 1f));
-        successPomo.add(new Entry(8f, 4f));
-        successPomo.add(new Entry(9f, 7f));
-        successPomo.add(new Entry(10f, 10f));
-        successPomo.add(new Entry(14f, 11f));
-        successPomo.add(new Entry(15f, 5f));
-        successPomo.add(new Entry(16f, 4f));
-        successPomo.add(new Entry(19f, 3f));
-        successPomo.add(new Entry(22f, 4f));
-        successPomo.add(new Entry(23f, 2f));
-
-
         failedPomo = new ArrayList<>();
-        failedPomo.add(new Entry(0f,2f));
-        failedPomo.add(new Entry(1f,5f));
-        failedPomo.add(new Entry(2f,1f));
-        failedPomo.add(new Entry(3f,0f));
-        failedPomo.add(new Entry(4f,6f));
-        failedPomo.add(new Entry(5f,3f));
-        failedPomo.add(new Entry(6f,4f));
-        failedPomo.add(new Entry(10f,2f));
-        failedPomo.add(new Entry(14f,5f));
-        failedPomo.add(new Entry(15f,1f));
-        failedPomo.add(new Entry(17f,0f));
-        failedPomo.add(new Entry(19f,6f));
-        failedPomo.add(new Entry(21f,3f));
-        failedPomo.add(new Entry(22f,4f));
+
+        for (UserRecord userRecord : userRecords) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(userRecord.getStartDateTime().getTime());
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            successPomo.add(new Entry(((float) hour), ((float) userRecord.getNumSuccess())));
+            failedPomo.add(new Entry(((float) hour), ((float) userRecord.getNumFailure())));
+        }
     }
+
+//    public void loadData(){
+//        successPomo = new ArrayList<>();
+//        // x-axis == hour
+//        // x=3 is equal to 3.00am
+//        successPomo.add(new Entry(3f, 6f));
+//        successPomo.add(new Entry(3f, 7f));
+//        successPomo.add(new Entry(6f, 8f));
+//        successPomo.add(new Entry(5f, 1f));
+//        successPomo.add(new Entry(8f, 4f));
+//        successPomo.add(new Entry(9f, 7f));
+//        successPomo.add(new Entry(10f, 10f));
+//        successPomo.add(new Entry(14f, 11f));
+//        successPomo.add(new Entry(15f, 5f));
+//        successPomo.add(new Entry(16f, 4f));
+//        successPomo.add(new Entry(19f, 3f));
+//        successPomo.add(new Entry(22f, 4f));
+//        successPomo.add(new Entry(23f, 2f));
+//
+//
+//        failedPomo = new ArrayList<>();
+//        failedPomo.add(new Entry(0f,2f));
+//        failedPomo.add(new Entry(1f,5f));
+//        failedPomo.add(new Entry(2f,1f));
+//        failedPomo.add(new Entry(3f,0f));
+//        failedPomo.add(new Entry(4f,6f));
+//        failedPomo.add(new Entry(5f,3f));
+//        failedPomo.add(new Entry(6f,4f));
+//        failedPomo.add(new Entry(10f,2f));
+//        failedPomo.add(new Entry(14f,5f));
+//        failedPomo.add(new Entry(15f,1f));
+//        failedPomo.add(new Entry(17f,0f));
+//        failedPomo.add(new Entry(19f,6f));
+//        failedPomo.add(new Entry(21f,3f));
+//        failedPomo.add(new Entry(22f,4f));
+//    }
 
     public void addTimeLabel(){
         timeLabels = new ArrayList<>();
@@ -114,19 +173,26 @@ public class StatisticsFragmentDay extends Fragment {
     }
 
     public void setDataOnLineChart(){
-        LineDataSet dataSet1 = new LineDataSet(successPomo, "Success Pomodoro");
-        dataSet1.setColor(Color.rgb( 255,193,7));
-        dataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        dataSet1.setLineWidth(3f);
+        if(successPomo.size() != 0) {
+            dataSet1 = new LineDataSet(successPomo, "Success Pomodoro");
+            dataSet1.setColor(Color.rgb( 255,193,7));
+            dataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
+            dataSet1.setLineWidth(3f);
+        }
 
-        LineDataSet dataSet2 = new LineDataSet(failedPomo, "Failed Pomodoro");
-        dataSet2.setColor(Color.rgb(117, 117,117));
-        dataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
-        dataSet2.setLineWidth(3f);
+        if(failedPomo.size() != 0) {
+            dataSet2 = new LineDataSet(failedPomo, "Failed Pomodoro");
+            dataSet2.setColor(Color.rgb(117, 117,117));
+            dataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
+            dataSet2.setLineWidth(3f);
+        }
+
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(dataSet1);
-        dataSets.add(dataSet2);
+        if(dataSet1 != null) dataSets.add(dataSet1);
+        if(dataSet2 != null) dataSets.add(dataSet2);
+
+        if(dataSets.size() == 0) return;
 
         LineData data = new LineData(dataSets);
         mLineChart.setData(data);

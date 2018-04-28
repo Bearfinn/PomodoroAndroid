@@ -1,10 +1,14 @@
 package com.hundredacrewoods.pomodoroandroid.databases;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.hundredacrewoods.pomodoroandroid.TimestampRange;
 
@@ -53,6 +57,6 @@ public class PomodoroViewModel extends AndroidViewModel {
     }
 
     public void setFilterSearch (TimestampRange timestampRange) {
-        filterSearch.setValue(timestampRange);
+        filterSearch.postValue(timestampRange);
     }
 }

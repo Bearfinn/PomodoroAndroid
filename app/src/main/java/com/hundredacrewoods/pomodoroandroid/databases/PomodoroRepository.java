@@ -18,16 +18,11 @@ public class PomodoroRepository {
 
     private LiveData<List<Preset>> mAllPresets;
 
-    private LiveData<List<UserRecord>> mSelectedUserRecords;
-
-    private LiveData<TimestampRange> filterLiveData;
-
     public PomodoroRepository(Application application) {
         PomodoroDatabase db = PomodoroDatabase.getInstance(application);
         mPresetDao = db.presetDao();
         mUserRecordDao = db.userRecordDao();
         mAllPresets = mPresetDao.selectAllPresets();
-        mSelectedUserRecords = mUserRecordDao.selectAllUserRecords();
     }
 
     public LiveData<List<Preset>> getAllPresets() {
