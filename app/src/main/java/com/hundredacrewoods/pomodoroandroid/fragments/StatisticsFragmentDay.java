@@ -55,35 +55,16 @@ public class StatisticsFragmentDay extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_statistics_today, container, false);
         mLineChart = rootView.findViewById(R.id.month_linechart);
-        Log.d("test", "Current time in view is " + System.currentTimeMillis());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        Log.d("test", "Current time before is " + calendar.getTimeInMillis());
-        //calendar.setTimeZone(TimeZone.getDefault());
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-        Log.d("test", "Current time before set is " + day + "/" + month + "/" + year);
-        calendar.set(year, month, day, 0, 0, 0);
-        Log.d("test", "Current time in Calendar is " + calendar.getTimeInMillis());
-        Timestamp startDate = new Timestamp(calendar.getTimeInMillis());
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Timestamp endDate = new Timestamp(calendar.getTimeInMillis());
-        Log.d("test", "Start timestamp of today: " + startDate.getTime());
-        Log.d("test", "End timestamp of today: " + endDate.getTime());
-        TimestampRange timestampRange = new TimestampRange(startDate, endDate);
 
         mPomodoroViewModel.selectUserRecords().observe(getActivity(), userRecords -> {
-            Log.d("test", "user records are updated");
-            Log.d("test", userRecords.size() + " size");
             loadData(userRecords);
             //loadData();
             addTimeLabel();
             setDataOnLineChart();
             setCustomizationOnBarChart();
         });
-        Log.d("test", "onCreateView");
-        mPomodoroViewModel.setFilterSearch(timestampRange);
+        mPomodoroViewModel.setFilterSearch(TimestampRange.
+                getTimestampRange(TimestampRange.TODAY, new Timestamp(System.currentTimeMillis())));
 //        loadData();
 //        addTimeLabel();
 //        setDataOnLineChart();

@@ -1,8 +1,11 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +15,23 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimestampRange;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StatisticsFragmentWeek extends Fragment {
 
@@ -25,23 +40,74 @@ public class StatisticsFragmentWeek extends Fragment {
     List<BarEntry> failedPomo;
     List<String> weekLabels;
 
+    private PomodoroViewModel mPomodoroViewModel;
+
     public StatisticsFragmentWeek(){
 
     }
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View rootView = inflater.inflate(R.layout.fragment_statistics_week, container, false);
         mBarChart = rootView.findViewById(R.id.week_barchart);
-        loadData();
-        addWeekLabel();
-        setDataOnBarChart();
-        setCustomizationOnBarChart();
+
+        mPomodoroViewModel.selectUserRecords().observe(getActivity(), userRecords -> {
+            loadData(userRecords);
+            addWeekLabel();
+            setDataOnBarChart();
+            setCustomizationOnBarChart();
+        });
+
+        mPomodoroViewModel.setFilterSearch(TimestampRange.
+                getTimestampRange(TimestampRange.THIS_WEEK,
+                        new Timestamp(System.currentTimeMillis())));
+
         return rootView;
+    }
+
+    public void loadData(List<UserRecord> userRecords) {
+        successPomo = new ArrayList<>();
+        failedPomo = new ArrayList<>();
+        Map<Integer, Integer> aggregateSuccess = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> aggregateFailure = new HashMap<Integer, Integer>();
+        Calendar calendar = Calendar.getInstance();
+
+        userRecords.stream().collect(Collectors.groupingBy(userRecord -> {
+            calendar.setTimeInMillis(userRecord.getStartDateTime().getTime());
+            return calendar.get(Calendar.DAY_OF_WEEK);
+        }, Collectors.summingInt(userRecord -> userRecord.getNumSuccess())))
+                .forEach((date, sumSuccess) -> successPomo.add(new BarEntry((float) date, (float) sumSuccess)));
+
+        userRecords.stream().collect(Collectors.groupingBy(userRecord -> {
+            calendar.setTimeInMillis(userRecord.getStartDateTime().getTime());
+            return calendar.get(Calendar.DAY_OF_WEEK);
+        }, Collectors.summingInt(userRecord -> userRecord.getNumFailure())))
+                .forEach((date, sumFailure) -> failedPomo.add(new BarEntry((float) date, (float) sumFailure)));
+
+//        for (UserRecord userRecord : userRecords) {
+////            Calendar calendar = Calendar.getInstance();
+//            calendar.setTimeInMillis(userRecord.getStartDateTime().getTime());
+//            int date = calendar.get(Calendar.DAY_OF_WEEK);
+//            if(aggregateSuccess.containsKey(date)) {
+//                int number = aggregateSuccess.get(date);
+//                aggregateSuccess.put(date, number + userRecord.getNumSuccess());
+//            } else aggregateSuccess.put(date, userRecord.getNumSuccess());
+//
+//            if(aggregateFailure.containsKey(date)) {
+//                int number = aggregateFailure.get(date);
+//                aggregateFailure.put(date, number + userRecord.getNumFailure());
+//            } else aggregateFailure.put(date, userRecord.getNumFailure());
+//        }
+//
+//        Set<Integer> keySuccess = aggregateSuccess.keySet();
+//        for(Integer i : keySuccess) {
+//            successPomo.add(new BarEntry(((float) i), ((float) aggregateSuccess.get(i))));
+//        }
     }
 
     public void loadData(){
