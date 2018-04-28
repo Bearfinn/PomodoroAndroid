@@ -1,10 +1,14 @@
 package com.hundredacrewoods.pomodoroandroid.databases;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.hundredacrewoods.pomodoroandroid.TimestampRange;
 
@@ -19,12 +23,15 @@ public class PomodoroViewModel extends AndroidViewModel {
 
     private LiveData<List<UserRecord>> mSelectedUserRecords;
 
+    private LiveData<List<UserRecord>> mAllUserRecords;
+
     private MutableLiveData<TimestampRange> filterSearch = new MutableLiveData<TimestampRange>();
 
     public PomodoroViewModel (Application application) {
         super(application);
         mPomodoroRepository = new PomodoroRepository(application);
         mAllPresets = mPomodoroRepository.getAllPresets();
+        mAllUserRecords = mPomodoroRepository.getAllUserRecords();
         mSelectedUserRecords = Transformations.switchMap(filterSearch, filter -> mPomodoroRepository.selectUserRecords(filter));
     }
 
@@ -52,7 +59,11 @@ public class PomodoroViewModel extends AndroidViewModel {
         return mSelectedUserRecords;
     }
 
+    public LiveData<List<UserRecord>> getAllUserRecords() {
+        return mAllUserRecords;
+    }
+
     public void setFilterSearch (TimestampRange timestampRange) {
-        filterSearch.setValue(timestampRange);
+        filterSearch.postValue(timestampRange);
     }
 }

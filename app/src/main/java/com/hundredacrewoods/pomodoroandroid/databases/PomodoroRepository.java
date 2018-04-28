@@ -18,16 +18,14 @@ public class PomodoroRepository {
 
     private LiveData<List<Preset>> mAllPresets;
 
-    private LiveData<List<UserRecord>> mSelectedUserRecords;
-
-    private LiveData<TimestampRange> filterLiveData;
+    private LiveData<List<UserRecord>> mAllUserRecords;
 
     public PomodoroRepository(Application application) {
         PomodoroDatabase db = PomodoroDatabase.getInstance(application);
         mPresetDao = db.presetDao();
         mUserRecordDao = db.userRecordDao();
         mAllPresets = mPresetDao.selectAllPresets();
-        mSelectedUserRecords = mUserRecordDao.selectAllUserRecords();
+        mAllUserRecords = mUserRecordDao.selectAllUserRecords();
     }
 
     public LiveData<List<Preset>> getAllPresets() {
@@ -52,6 +50,10 @@ public class PomodoroRepository {
 
     public LiveData<List<UserRecord>> selectUserRecords (TimestampRange timestampRange) {
         return mUserRecordDao.selectUserRecords(timestampRange.getFrom(), timestampRange.getTo());
+    }
+
+    public LiveData<List<UserRecord>> getAllUserRecords() {
+        return mAllUserRecords;
     }
 
     private static class deletePresetAsyncTask extends AsyncTask<Integer, Void, Void> {

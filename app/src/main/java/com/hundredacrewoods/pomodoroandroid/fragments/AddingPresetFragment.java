@@ -27,6 +27,9 @@ import android.widget.TextView;
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
+
+import java.sql.Timestamp;
 
 public class AddingPresetFragment extends Fragment
         implements EditPresetNameFragment.EditPresetNameListener,
@@ -225,7 +228,8 @@ public class AddingPresetFragment extends Fragment
                     , shortInMillis, longInMillis, mInterval);
             mainActivity.getPomodoroViewModel().insertPreset(preset);
         }
-
+        //Log.d("Test", "Current time is: " + System.currentTimeMillis());
+        //mainActivity.getPomodoroViewModel().insertUserRecord(new UserRecord(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 1,1,1,6,2));
         getFragmentManager().popBackStack();
     }
 
