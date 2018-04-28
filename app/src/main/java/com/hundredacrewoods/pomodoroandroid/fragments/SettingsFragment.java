@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -61,7 +63,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
-        getActivity().setTitle("Setting");
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle("Setting");
     }
 
     @Override
