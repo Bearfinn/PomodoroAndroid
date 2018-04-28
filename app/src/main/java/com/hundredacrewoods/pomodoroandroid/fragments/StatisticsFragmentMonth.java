@@ -47,6 +47,9 @@ public class StatisticsFragmentMonth extends Fragment {
 
     public void loadData(){
         successPomo = new ArrayList<>();
+        // x-axis = month
+        // x=0 is equal to Jan
+        // x=12 is equal to Dec
         successPomo.add(new Entry(0f, 10f));
         successPomo.add(new Entry(1f, 2f));
         successPomo.add(new Entry(2f, 7f));

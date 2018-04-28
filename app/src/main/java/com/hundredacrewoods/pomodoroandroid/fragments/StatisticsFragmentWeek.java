@@ -36,7 +36,7 @@ public class StatisticsFragmentWeek extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View rootView = inflater.inflate(R.layout.fragment_statistics_week, container, false);
-        mBarChart = (BarChart) rootView.findViewById(R.id.week_barchart);
+        mBarChart = rootView.findViewById(R.id.week_barchart);
         loadData();
         addWeekLabel();
         setDataOnBarChart();
@@ -46,13 +46,14 @@ public class StatisticsFragmentWeek extends Fragment {
 
     public void loadData(){
         successPomo = new ArrayList<>();
+        // x-axis == day
+        // x=0 is equal to Mon
         successPomo.add(new BarEntry(0f, 10f));
         successPomo.add(new BarEntry(1f, 2f));
         successPomo.add(new BarEntry(2f, 7f));
         successPomo.add(new BarEntry(3f, 12f));
         successPomo.add(new BarEntry(5f, 14f));
         successPomo.add(new BarEntry(6f, 4f));
-        successPomo.add(new BarEntry(4f, 2f));
 
         failedPomo = new ArrayList<>();
         failedPomo.add(new BarEntry(0f,2f));

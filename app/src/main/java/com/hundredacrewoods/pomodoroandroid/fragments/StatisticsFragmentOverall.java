@@ -34,15 +34,17 @@ public class StatisticsFragmentOverall extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_statistics_overall, container, false);
         mPieChart = rootView.findViewById(R.id.overall_piechart);
 
-        addDataFromDB();
+        loadData();
         addDataToPieChart();
         customizePieChart();
 
         return rootView;
     }
 
-    public void addDataFromDB(){
+    public void loadData(){
         input = new ArrayList<>();
+        // for value 29, it comes from count the number of success Pomodoro
+        // for value 3, it comes from count the number of failed Pomodoro
         input.add(new PieEntry(29f,"Success Pomodoro"));
         input.add(new PieEntry(3f, "Failed Pomodoro"));
     }

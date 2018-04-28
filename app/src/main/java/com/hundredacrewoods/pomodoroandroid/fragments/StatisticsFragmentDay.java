@@ -47,6 +47,8 @@ public class StatisticsFragmentDay extends Fragment {
 
     public void loadData(){
         successPomo = new ArrayList<>();
+        // x-axis == hour
+        // x=3 is equal to 3.00am
         successPomo.add(new Entry(3f, 6f));
         successPomo.add(new Entry(3f, 7f));
         successPomo.add(new Entry(6f, 8f));
