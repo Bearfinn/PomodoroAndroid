@@ -60,6 +60,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        getActivity().setTitle("Setting");
     }
 
     @Override
