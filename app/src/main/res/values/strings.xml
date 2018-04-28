@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PomodoroAndroid</string>
+    <string name="app_name">Tangjai</string>
     <string name="title_timer">Timer</string>
     <string name="title_preset">Preset</string>
     <string name="title_statistics">Statistics</string>
