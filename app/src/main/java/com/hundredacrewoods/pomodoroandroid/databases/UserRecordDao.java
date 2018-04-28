@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 
 import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Dao
@@ -20,4 +21,7 @@ public interface UserRecordDao {
 
     @Query("SELECT * FROM UserRecords")
     public LiveData<List<UserRecord>> selectAllUserRecords();
+
+    @Query("SELECT * FROM UserRecords WHERE startDateTime >= :from AND endDateTime <= :to")
+    public LiveData<List<UserRecord>> selectUserRecords(Timestamp from, Timestamp to);
 }

@@ -1,11 +1,18 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
-import android.os.CountDownTimer;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,22 +21,69 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimerService;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
+import java.util.Locale;
+
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
 
-    int shortBreakTime;
-    int longBreakTime;
-    int focusTime;
-    int currentStatus;
-    int shortBreakCount;
-    int shortBreakPerLongBreak;
+    //region Variables
+
+    final String LOG_TAG = "TimerFragment";
+
+    TimerService.Status currentStatus;
+    long currentTimeLeftInMillis;
+    boolean isTimerRunning;
+
     TextView presetNameTextView;
+    TextView timerStatusTextView;
     TextView timerTextView;
     Button startButton;
+    Button resetButton;
+    Button skipButton;
+
+    TimerService timerService;
+    boolean isBound;
+
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(LOG_TAG, "Service connected.");
+            TimerService.TimerServiceBinder binder = (TimerService.TimerServiceBinder) iBinder;
+            timerService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(LOG_TAG, "Service disconnected.");
+            timerService = null;
+            isBound = false;
+        }
+    };
+
+    //endregion
+
+    class IncomingHandler extends Handler
+    {
+        @Override
+        public void handleMessage(Message msg) {
+
+            Bundle bundle = msg.getData();
+            Log.d(LOG_TAG, "Message received.");
+
+            currentTimeLeftInMillis = (long) bundle.get("currentTimeLeftInMillis");
+            updateTimerText();
+
+            currentStatus = (TimerService.Status) bundle.get("currentStatus");
+            switch (currentStatus) {
+                case FOCUS: timerStatusTextView.setText(R.string.focus_text); break;
+                case SHORT_BREAK: timerStatusTextView.setText(R.string.short_break_text); break;
+                case LONG_BREAK: timerStatusTextView.setText(R.string.long_break_text); break;
+            }
+        }
+    }
 
     Button mVibe;
 
@@ -37,13 +91,14 @@ public class TimerFragment extends Fragment {
         super();
     }
 
-    @SuppressWarnings("unused")
     public static TimerFragment newInstance() {
         TimerFragment fragment = new TimerFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
+
+    //region Overridden Functions
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,104 +117,127 @@ public class TimerFragment extends Fragment {
         return rootView;
     }
 
-    private void init(Bundle savedInstanceState) {
-        // Init Fragment level's variable(s) here
-        focusTime = 20;
-        shortBreakTime = 5;
-        longBreakTime = 15;
-        shortBreakCount = 0;
-        currentStatus = 0;
-        shortBreakPerLongBreak = 1;
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    private void initInstances(View rootView, Bundle savedInstanceState) {
-        // Init 'View' instance(s) with rootView.findViewById here
-        presetNameTextView = rootView.findViewById(R.id.presetName_textView);
-        timerTextView = rootView.findViewById(R.id.timer_textView);
-        startButton = rootView.findViewById(R.id.start_button);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startTimer();
-            }
-        });
-    }
-
-    public void startTimer() {
-        Log.i("Timer", "Button clicked!");
-        int secondsInFuture = 0;
-        switch (currentStatus) {
-            case 0:
-                secondsInFuture = focusTime;
-                presetNameTextView.setText(R.string.focus_text);
-                break;
-            case 1:
-                secondsInFuture = shortBreakTime;
-                presetNameTextView.setText(R.string.short_break_text);
-                break;
-            case 2:
-                secondsInFuture = longBreakTime;
-                presetNameTextView.setText(R.string.long_break_text);
-                break;
-            default:
-                break;
-        }
-        new CountDownTimer(secondsInFuture * 1000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                long minutesLeft = (millisUntilFinished / 1000) / 60;
-                long secondsLeft = (millisUntilFinished / 1000) % 60;
-                String timeLeft = minutesLeft + ":" + secondsLeft;
-                timerTextView.setText(timeLeft);
-            }
-
-            public void onFinish() {
-                switch (currentStatus) {
-                    case 0:
-                        if (shortBreakCount > shortBreakPerLongBreak) {
-                            currentStatus = 2;
-                            shortBreakCount = 0;
-                        } else {
-                            currentStatus = 1;
-                            shortBreakCount++;
-                        }
-                        startTimer();
-                        break;
-                    default:
-                        currentStatus = 0;
-                        startTimer();
-                }
-                timerTextView.setText(R.string.timer_text);
-            }
-        }.start();
-    }
-
     @Override
     public void onStart() {
         super.onStart();
+        Intent intent = new Intent(getActivity(), TimerService.class);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (isBound) {
+            getActivity().unbindService(mServiceConnection);
+            isBound = false;
+        }
     }
 
-    /*
-     * Save Instance State Here
-     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save Instance State here
+        outState.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
+        outState.putSerializable("currentStatus", currentStatus);
+        outState.putBoolean("isTimerRunning", isTimerRunning);
     }
 
-    /*
-     * Restore Instance State Here
-     */
-    @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance State here
+        currentTimeLeftInMillis = (long) savedInstanceState.get("currentTimeLeftInMillis");
+        currentStatus = (TimerService.Status) savedInstanceState.get("currentStatus");
+        isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
     }
+
+    private void init(Bundle savedInstanceState) {
+        // Init Fragment level's variable(s) here
+        currentTimeLeftInMillis = 0;
+        currentStatus = TimerService.Status.FOCUS;
+
+        isTimerRunning = false;
+
+        Messenger messenger = new Messenger(new IncomingHandler());
+        Intent intent = new Intent(getActivity().getApplicationContext(), TimerService.class);
+        intent.putExtra("messenger", messenger);
+        getActivity().startService(intent);
+    }
+
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        presetNameTextView = rootView.findViewById(R.id.presetName_textView);
+        timerStatusTextView = rootView.findViewById(R.id.timerStatus_textView);
+        timerTextView = rootView.findViewById(R.id.timer_textView);
+        startButton = rootView.findViewById(R.id.start_button);
+        if (isTimerRunning) {
+            startButton.setText(R.string.start_button_pause_text);
+        }
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startButtonPressed();
+            }
+        });
+        resetButton = rootView.findViewById(R.id.pause_button);
+        resetButton.setEnabled(false);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetTimer();
+            }
+        });
+        skipButton = rootView.findViewById(R.id.stop_button);
+        skipButton.setEnabled(false);
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                skipPhase();
+            }
+        });
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_timer);
+    }
+
+    //endregion
+    //region Self-defined Functions
+
+    public void startButtonPressed() {
+        timerService.startButtonPressed();
+        resetButton.setEnabled(true);
+        skipButton.setEnabled(true);
+        if (isTimerRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
+        }
+        isTimerRunning = !isTimerRunning;
+    }
+
+    public void pauseTimer() {
+        this.startButton.setText(R.string.start_button_resume_text);
+    }
+
+    public void startTimer() {
+        this.startButton.setText(R.string.start_button_pause_text);;
+    }
+
+    public void resetTimer() {
+        timerService.resetTimer();
+        timerStatusTextView.setText(R.string.focus_text);
+        startButton.setText(R.string.start_button_start_text);
+        resetButton.setEnabled(false);
+        skipButton.setEnabled(false);
+        isTimerRunning = false;
+    }
+
+    public void skipPhase() {
+        timerService.skipPhase();
+    }
+
+    void updateTimerText() {
+        long minutesLeft = (currentTimeLeftInMillis / 1000) / 60;
+        long secondsLeft = (currentTimeLeftInMillis / 1000) % 60;
+        timerTextView.setText(String.format(Locale.getDefault(), "%d:%02d", minutesLeft, secondsLeft));
+    }
+
+    //endregion
 
 }

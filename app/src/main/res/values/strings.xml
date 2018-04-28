@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PomodoroAndroid</string>
+    <string name="app_name">Tangjai</string>
     <string name="title_timer">Timer</string>
     <string name="title_preset">Preset</string>
     <string name="title_statistics">Statistics</string>
@@ -27,10 +27,29 @@
     <string name="preset_long_default">15 minutes</string>
     <string name="preset_text">Pomodoro</string>
     <string name="timer_text">0:00</string>
-    <string name="start_button_text">Start</string>
-    <string name="pause_button_text">Pause</string>
-    <string name="stop_button_text">Stop</string>
+    <string name="start_button_start_text">Start</string>
+    <string name="start_button_pause_text">Pause</string>
+    <string name="start_button_resume_text">Resume</string>
+    <string name="reset_button_text">Reset</string>
+    <string name="skip_button_text">Skip</string>
     <string name="short_break_text">Short Break</string>
     <string name="long_break_text">Long Break</string>
     <string name="focus_text">Focus Time!</string>
+    <string name="timer_status_text">Focus TIme!</string>
+    <string name="preset_popup_menu_edit">edit</string>
+    <string name="preset_popup_menu_delete">delete</string>
+    <string name="adding_preset_save_button">Save</string>
+    <string name="adding_preset_long_after">Long break after</string>
+    <string name="adding_preset_default_interval">4 intervals</string>
+    <string-array name="long_break_after">
+        <item>2 intervals</item>
+        <item>3 intervals</item>
+        <item>4 intervals</item>
+        <item>5 intervals</item>
+        <item>6 intervals</item>
+        <item>7 intervals</item>
+        <item>8 intervals</item>
+        <item>9 intervals</item>
+        <item>10 intervals</item>
+    </string-array>
 </resources>

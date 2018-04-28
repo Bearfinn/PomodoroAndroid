@@ -1,46 +1,35 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.SeekBar;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 
-public class EditPresetNameFragment extends DialogFragment {
+public class SelectingLongBreakFragment extends DialogFragment {
+    public static final String TAG = "selectingLongBreakFragment";
 
-    public static final String TAG = "editPresetNameFragment";
+    private int mIntervals;
 
-    private String mPresetName;
+    private SelectingLongBreakListener mCallback;
 
-    private EditPresetNameListener mCallback;
-
-    public interface EditPresetNameListener {
-        void getSavedName(String name);
+    public interface SelectingLongBreakListener {
+        void getSelectingInterval(int interval);
     }
 
-    public EditPresetNameFragment() {
+    public SelectingLongBreakFragment() {
         super();
     }
 
     @SuppressWarnings("unused")
-    public static EditPresetNameFragment newInstance(String presetName) {
-        EditPresetNameFragment fragment = new EditPresetNameFragment();
+    public static SelectingLongBreakFragment newInstance(int intervals) {
+        SelectingLongBreakFragment fragment = new SelectingLongBreakFragment();
         Bundle args = new Bundle();
-        fragment.mPresetName = presetName;
+        fragment.mIntervals = intervals;
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,20 +59,18 @@ public class EditPresetNameFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog (Bundle savedInstanceState) {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("Preset Name");
+        alertDialogBuilder.setTitle("Long break after");
 
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText(mPresetName);
-        input.setSelection(mPresetName.length());
-        alertDialogBuilder.setView(input);
-
-        alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setSingleChoiceItems(R.array.long_break_after, mIntervals - 2
+                , new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                EditPresetNameListener activity = (EditPresetNameListener) getFragmentManager().
-                        findFragmentByTag(AddingPresetFragment.TAG);
-                activity.getSavedName(input.getText().toString());
+                SelectingLongBreakListener activity =
+                        (SelectingLongBreakListener) getFragmentManager().findFragmentByTag(
+                                AddingPresetFragment.TAG
+                        );
+                activity.getSelectingInterval(i + 2);
+                dialogInterface.dismiss();
             }
         });
 
