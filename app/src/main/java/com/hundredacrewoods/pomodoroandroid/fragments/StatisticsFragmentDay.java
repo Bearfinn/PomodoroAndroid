@@ -95,7 +95,7 @@ public class StatisticsFragmentDay extends Fragment {
         timeLabels.add("10.00am");
         timeLabels.add("11.00am");
         timeLabels.add("12.00pm");
-        timeLabels.add("13.000pm");
+        timeLabels.add("13.00pm");
         timeLabels.add("14.00pm");
         timeLabels.add("15.00pm");
         timeLabels.add("16.00pm");
@@ -143,5 +143,6 @@ public class StatisticsFragmentDay extends Fragment {
         mLineChart.getDescription().setEnabled(false);
         mLineChart.setVisibleXRangeMaximum(15);
         mLineChart.moveViewToX(10);
+        mLineChart.setScaleEnabled(false);
     }
 }

@@ -87,18 +87,18 @@ public class StatisticsFragmentMonth extends Fragment {
 
     public void setDataOnLineChart(){
         LineDataSet dataSet1 = new LineDataSet(successPomo, "Success Pomodoro");
-        dataSet1.setColor(Color.rgb(255, 193, 7));
+        dataSet1.setColor(Color.rgb(255,193,7));
         dataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet1.setLineWidth(3f);
         dataSet1.setCircleRadius(10f);
-        dataSet1.setCircleColor(Color.rgb(117,117,117));
+        dataSet1.setCircleColor(Color.rgb(255,87,34));
 
         LineDataSet dataSet2 = new LineDataSet(failedPomo, "Failed Pomodoro");
-        dataSet2.setColor(Color.rgb(255, 87, 34));
+        dataSet2.setColor(Color.rgb(117,117,177));
         dataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet2.setLineWidth(3f);
         dataSet2.setCircleRadius(10f);
-        dataSet2.setCircleColor(Color.rgb(117,117,117));
+        dataSet2.setCircleColor(Color.rgb(255,87,34));
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(dataSet1);
@@ -119,6 +119,7 @@ public class StatisticsFragmentMonth extends Fragment {
         monthLineChart.getDescription().setEnabled(false);
         monthLineChart.setVisibleXRangeMaximum(6);
         monthLineChart.moveViewToX(6);
+        monthLineChart.setScaleEnabled(false);
     }
 
 }

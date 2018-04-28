@@ -91,7 +91,6 @@ public class StatisticsFragmentWeek extends Fragment {
     public void setCustomizationOnBarChart(){
         //chart.groupBars(0.00001f, 0.2f, 0.02f);
         //chart.setFitBars(true); // make the x-axis fit exactly all bars
-        mBarChart.invalidate(); // refresh
         mBarChart.animateXY(1000,1000);
 
         mBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(weekLabels));
@@ -102,5 +101,7 @@ public class StatisticsFragmentWeek extends Fragment {
         mBarChart.getDescription().setEnabled(false);
         //chart.getXAxis().setCenterAxisLabels(true);
         mBarChart.setDragEnabled(true);
+        mBarChart.setScaleEnabled(false);
+        mBarChart.invalidate(); // refresh
     }
 }
