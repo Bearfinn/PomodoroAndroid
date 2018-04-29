@@ -19,6 +19,7 @@ import android.os.Parcel;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -45,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.prefs.PreferenceChangeEvent;
 
 @SuppressWarnings("unused")
 public class TimerFragment extends Fragment {
@@ -123,8 +125,10 @@ public class TimerFragment extends Fragment {
                 }
                 case SHORT_BREAK: {
                     if (isAfterStatusChangeToBreak) {
-                        Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                        vibrator.vibrate(1000);
+                        if (android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(SettingsFragment.PREF_VIBE, false)) {
+                            Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibrator.vibrate(1000);
+                        }
 
                         try {
                             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
