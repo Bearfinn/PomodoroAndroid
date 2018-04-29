@@ -3,6 +3,7 @@ package com.hundredacrewoods.pomodoroandroid.fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,6 +147,8 @@ public class StatisticsFragmentDay extends Fragment {
             dataSet1.setColor(Color.rgb( 255,193,7));
             dataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
             dataSet1.setLineWidth(3f);
+        } else {
+            dataSet1 = null;
         }
 
         if(failedPomo.size() != 0) {
@@ -153,6 +156,8 @@ public class StatisticsFragmentDay extends Fragment {
             dataSet2.setColor(Color.rgb(117, 117,117));
             dataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
             dataSet2.setLineWidth(3f);
+        } else {
+            dataSet1 = null;
         }
 
 
@@ -160,7 +165,10 @@ public class StatisticsFragmentDay extends Fragment {
         if(dataSet1 != null) dataSets.add(dataSet1);
         if(dataSet2 != null) dataSets.add(dataSet2);
 
-        if(dataSets.size() == 0) return;
+        if(dataSets.size() == 0) {
+            mLineChart.invalidate();
+            return;
+        }
 
         LineData data = new LineData(dataSets);
         mLineChart.setData(data);

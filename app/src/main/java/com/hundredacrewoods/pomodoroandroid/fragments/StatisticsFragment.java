@@ -47,6 +47,7 @@ public class StatisticsFragment extends Fragment {
             onRestoreInstanceState(savedInstanceState);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle("Statistics");
+        actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
     @Override

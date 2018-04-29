@@ -68,7 +68,7 @@ public class PomodoroViewModel extends AndroidViewModel {
     }
 
     public void setFilterSearch (TimestampRange timestampRange) {
-        filterSearch.postValue(timestampRange);
+        filterSearch.setValue(timestampRange);
     }
 
     public void deleteAllUserRecords() {
