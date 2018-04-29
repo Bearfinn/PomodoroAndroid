@@ -2,7 +2,6 @@ package com.hundredacrewoods.pomodoroandroid.activities;
 
 import android.app.NotificationManager;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -20,47 +19,13 @@ import com.hundredacrewoods.pomodoroandroid.fragments.TimerFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-<<<<<<< HEAD
-    private TextView mTextMessage;
     private Fragment mContent;
-=======
->>>>>>> acfe9a322e1d26cbf175ed1e01c30342d1f647a9
+
     private PomodoroViewModel mPomodoroViewModel;
     public PomodoroViewModel getPomodoroViewModel() {
         return mPomodoroViewModel;
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-<<<<<<< HEAD
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_timer:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_fragmentholder, TimerFragment.newInstance())
-                            .commit();
-                    return true;
-                case R.id.navigation_preset:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_fragmentholder, new PresetFragment())
-                            .commit();
-                    return true;
-                case R.id.navigation_statistics:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_fragmentholder, new StatisticsFragment())
-                            .commit();
-                    return true;
-                case R.id.navigation_settings:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_fragmentholder, new SettingsFragment())
-                            .commit();
-                    return true;
-            }
-            return false;
-        }
-    };
-=======
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_timer:
@@ -86,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             };
->>>>>>> acfe9a322e1d26cbf175ed1e01c30342d1f647a9
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
