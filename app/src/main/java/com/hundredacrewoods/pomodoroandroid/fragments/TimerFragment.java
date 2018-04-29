@@ -22,6 +22,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -370,7 +371,9 @@ public class TimerFragment extends Fragment {
             resetButton.setEnabled(true);
             skipButton.setEnabled(true);
         }
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_timer);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setTitle(R.string.title_timer);
+        actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
     //endregion
