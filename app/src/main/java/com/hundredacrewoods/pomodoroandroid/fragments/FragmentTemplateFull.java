@@ -11,6 +11,12 @@ import com.hundredacrewoods.pomodoroandroid.R;
 
 /**
  * Created by nuuneoi on 11/16/2014.
+ *
+ */
+
+/*
+    This class is never used. It is a template for fragment
+    It is created by nuuneoi, the Thai android developer
  */
 @SuppressWarnings("unused")
 public class FragmentTemplateFull extends Fragment {

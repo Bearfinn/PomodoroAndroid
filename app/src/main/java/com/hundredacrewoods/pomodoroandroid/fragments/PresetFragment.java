@@ -1,7 +1,5 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
-import android.arch.lifecycle.Observer;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
@@ -23,11 +20,7 @@ import com.hundredacrewoods.pomodoroandroid.adapter.PresetAdapter;
 import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 
-import java.util.List;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
 @SuppressWarnings("unused")
 public class PresetFragment extends Fragment {
 
@@ -65,13 +58,16 @@ public class PresetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //Get view by inflating the preset layout
         View rootView = inflater.inflate(R.layout.fragment_preset, container, false);
         initInstances(rootView, savedInstanceState);
 
+        //Set action bar
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle("Preset");
         actionBar.setDisplayHomeAsUpEnabled(false);
 
+        //Set onClickListener for floating action button to create new preset
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,20 +83,18 @@ public class PresetFragment extends Fragment {
             }
         });
 
+        //Set RecyclerView with RecyclerView.Adapter
         mRecyclerView.setHasFixedSize(true);
         final PresetAdapter adapter = new PresetAdapter(getContext());
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        //Get ViewModel for data handling connection
         MainActivity activity = (MainActivity) getActivity();
         mPomodoroViewModel = activity.getPomodoroViewModel();
 
-        mPomodoroViewModel.getAllPresets().observe(getActivity(), new Observer<List<Preset>>() {
-            @Override
-            public void onChanged(@Nullable List<Preset> presets) {
-                adapter.setPresets(presets);
-            }
-        });
+        //If the data is the database has been changed, it will update cache in the adapter to change view
+        mPomodoroViewModel.getAllPresets().observe(getActivity(), presets -> adapter.setPresets(presets));
 
         return rootView;
     }

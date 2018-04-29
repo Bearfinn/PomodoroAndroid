@@ -1,24 +1,14 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.SeekBar;
-
-import com.hundredacrewoods.pomodoroandroid.R;
 
 public class EditPresetNameFragment extends DialogFragment {
 
@@ -26,8 +16,7 @@ public class EditPresetNameFragment extends DialogFragment {
 
     private String mPresetName;
 
-    private EditPresetNameListener mCallback;
-
+    //Interface for fragment communication between this fragment and AddingPresetFragment
     public interface EditPresetNameListener {
         void getSavedName(String name);
     }
@@ -36,7 +25,7 @@ public class EditPresetNameFragment extends DialogFragment {
         super();
     }
 
-    @SuppressWarnings("unused")
+
     public static EditPresetNameFragment newInstance(String presetName) {
         EditPresetNameFragment fragment = new EditPresetNameFragment();
         Bundle args = new Bundle();
@@ -44,19 +33,6 @@ public class EditPresetNameFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        try {
-//            mCallback = (OnAlertDialogPositiveButtonClicked) context;
-//
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString() +
-//                    "must implement OnAlertDialogPositiveButtonClicked");
-//        }
-//    }
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,44 +45,29 @@ public class EditPresetNameFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog (Bundle savedInstanceState) {
+        //Create alertDialog builder to pre-build alert dialog
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Preset Name");
 
+        //Create input text view ans set it into the alert dialog
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(mPresetName);
         input.setSelection(mPresetName.length());
         alertDialogBuilder.setView(input);
 
-        alertDialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                EditPresetNameListener activity = (EditPresetNameListener) getFragmentManager().
-                        findFragmentByTag(AddingPresetFragment.TAG);
-                activity.getSavedName(input.getText().toString());
-            }
+        //This is for Save button. After user press this button, it will send the input to Adding preset fragment via the interface
+        alertDialogBuilder.setPositiveButton("Save", (dialogInterface, i) -> {
+            EditPresetNameListener activity = (EditPresetNameListener) getFragmentManager().
+                    findFragmentByTag(AddingPresetFragment.TAG);
+            activity.getSavedName(input.getText().toString());
         });
 
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        //This is for cancel button.
+        alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
 
         return alertDialogBuilder.show();
     }
-
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(R.layout.dialog_fragment_save_preset_name, container,
-//                false);
-//        initInstances(rootView, savedInstanceState);
-//
-//        return rootView;
-//    }
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here

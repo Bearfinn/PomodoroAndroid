@@ -34,19 +34,6 @@ public class SelectingLongBreakFragment extends DialogFragment {
         return fragment;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        try {
-//            mCallback = (OnAlertDialogPositiveButtonClicked) context;
-//
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString() +
-//                    "must implement OnAlertDialogPositiveButtonClicked");
-//        }
-//    }
-
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
@@ -61,39 +48,23 @@ public class SelectingLongBreakFragment extends DialogFragment {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Long break after");
 
+        //Set alert dialog to show list of intervals using array
         alertDialogBuilder.setSingleChoiceItems(R.array.long_break_after, mIntervals - 2
-                , new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SelectingLongBreakListener activity =
-                        (SelectingLongBreakListener) getFragmentManager().findFragmentByTag(
-                                AddingPresetFragment.TAG
-                        );
-                activity.getSelectingInterval(i + 2);
-                dialogInterface.dismiss();
-            }
-        });
+                , (dialogInterface, i) -> {
+                    SelectingLongBreakListener activity =
+                            (SelectingLongBreakListener) getFragmentManager().findFragmentByTag(
+                                    AddingPresetFragment.TAG
+                            );
+                    // i + 2 because i is a position in the array and it starts at 2 intervals
+                    activity.getSelectingInterval(i + 2);
+                    dialogInterface.dismiss();
+                });
 
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        alertDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
 
         return alertDialogBuilder.show();
     }
 
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(R.layout.dialog_fragment_save_preset_name, container,
-//                false);
-//        initInstances(rootView, savedInstanceState);
-//
-//        return rootView;
-//    }
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
