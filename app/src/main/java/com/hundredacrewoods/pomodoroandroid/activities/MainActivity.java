@@ -3,6 +3,7 @@ package com.hundredacrewoods.pomodoroandroid.activities;
 import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -30,13 +31,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
-
+    private Fragment mContent;
     private PomodoroViewModel mPomodoroViewModel;
-
     public PomodoroViewModel getPomodoroViewModel() {
         return mPomodoroViewModel;
     }
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_timer:
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame_fragmentholder, new TimerFragment())
+                            .replace(R.id.frame_fragmentholder, TimerFragment.newInstance())
                             .commit();
                     return true;
                 case R.id.navigation_preset:
@@ -82,19 +81,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
-
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
-            Fragment timerFragment = new TimerFragment();
+            Fragment timerFragment = TimerFragment.newInstance();
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frame_fragmentholder, timerFragment)
                     .commit();
         }
 
+        if (savedInstanceState != null) {
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "TimerFragment");
+        }
+
         mPomodoroViewModel = ViewModelProviders.of(this).get(PomodoroViewModel.class);
         PreferenceManager.setDefaultValues(this, R.xml.settings_preference, false);
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's instance
+        if (mContent != null)
+            getSupportFragmentManager().putFragment(outState, "TimerFragment", mContent);
     }
 }

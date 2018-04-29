@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +23,11 @@ import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.TimerService;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
+import java.sql.Timestamp;
 import java.util.Locale;
 
 @SuppressWarnings("unused")
@@ -43,8 +48,17 @@ public class TimerFragment extends Fragment {
     Button resetButton;
     Button skipButton;
 
+    boolean isJustStarted;
+    boolean isPausedBeforeBreak;
+    boolean isAfterStatusChangeToBreak;
+    Timestamp startDateTime, endDateTime;
+    int cycleCount, shortBreakCount;
+    int successCount, failureCount;
+
     TimerService timerService;
     boolean isBound;
+
+    private PomodoroViewModel mPomodoroViewModel;
 
     ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -78,8 +92,24 @@ public class TimerFragment extends Fragment {
 
             currentStatus = (TimerService.Status) bundle.get("currentStatus");
             switch (currentStatus) {
-                case FOCUS: timerStatusTextView.setText(R.string.focus_text); break;
-                case SHORT_BREAK: timerStatusTextView.setText(R.string.short_break_text); break;
+                case FOCUS: {
+                    isAfterStatusChangeToBreak = true;
+                    timerStatusTextView.setText(R.string.focus_text);
+                    break;
+                }
+                case SHORT_BREAK: {
+                    if (isAfterStatusChangeToBreak) {
+                        if (isPausedBeforeBreak) {
+                            failureCount++;
+                            isPausedBeforeBreak = false;
+                        } else {
+                            successCount++;
+                        }
+                        isAfterStatusChangeToBreak = false;
+                    }
+                    timerStatusTextView.setText(R.string.short_break_text);
+                    break;
+                }
                 case LONG_BREAK: timerStatusTextView.setText(R.string.long_break_text); break;
             }
         }
@@ -87,15 +117,32 @@ public class TimerFragment extends Fragment {
 
     Button mVibe;
 
-    public TimerFragment() {
-        super();
-    }
-
     public static TimerFragment newInstance() {
         TimerFragment fragment = new TimerFragment();
         Bundle args = new Bundle();
+        args.putLong("currentTimeLeftInMillis", 20000);
+        args.putSerializable("currentStatus", TimerService.Status.FOCUS);
+        args.putBoolean("isTimerRunning", false);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static TimerFragment newInstance(long currentTimeLeftInMillis, TimerService.Status currentStatus, boolean isTimerRunning) {
+        TimerFragment fragment = new TimerFragment();
+        Bundle args = new Bundle();
+        args.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);
+        args.putSerializable("currentStatus", currentStatus);
+        args.putBoolean("isTimerRunning", isTimerRunning);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            onRestoreInstanceState(savedInstanceState);
+        }
     }
 
     //region Overridden Functions
@@ -105,8 +152,14 @@ public class TimerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
+            currentTimeLeftInMillis = getArguments().getLong("currentTimeLeftInMillis");
+            currentStatus = (TimerService.Status) getArguments().getSerializable("currentStatus");
+            isTimerRunning = getArguments().getBoolean("isTimerRunning");
+        }
+
+        mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
     }
 
     @Override
@@ -154,7 +207,10 @@ public class TimerFragment extends Fragment {
         currentTimeLeftInMillis = 0;
         currentStatus = TimerService.Status.FOCUS;
 
-        isTimerRunning = false;
+        //isTimerRunning = false;
+        isPausedBeforeBreak = false;
+        successCount = 0;
+        failureCount = 0;
 
         Messenger messenger = new Messenger(new IncomingHandler());
         Intent intent = new Intent(getActivity().getApplicationContext(), TimerService.class);
@@ -200,6 +256,10 @@ public class TimerFragment extends Fragment {
     //region Self-defined Functions
 
     public void startButtonPressed() {
+        if (isJustStarted) {
+            startDateTime = new Timestamp(System.currentTimeMillis());
+            isJustStarted = false;
+        }
         timerService.startButtonPressed();
         resetButton.setEnabled(true);
         skipButton.setEnabled(true);
@@ -212,6 +272,9 @@ public class TimerFragment extends Fragment {
     }
 
     public void pauseTimer() {
+        if (currentStatus == TimerService.Status.FOCUS) {
+            isPausedBeforeBreak = true;
+        }
         this.startButton.setText(R.string.start_button_resume_text);
     }
 
@@ -220,6 +283,20 @@ public class TimerFragment extends Fragment {
     }
 
     public void resetTimer() {
+        endDateTime = new Timestamp(System.currentTimeMillis());
+        UserRecord userRecord = new UserRecord(
+                startDateTime,
+                endDateTime,
+                0,
+                0,
+                0,
+                successCount,
+                failureCount
+        );
+        mPomodoroViewModel.insertUserRecord(userRecord);
+
+        isJustStarted = true;
+
         timerService.resetTimer();
         timerStatusTextView.setText(R.string.focus_text);
         startButton.setText(R.string.start_button_start_text);
