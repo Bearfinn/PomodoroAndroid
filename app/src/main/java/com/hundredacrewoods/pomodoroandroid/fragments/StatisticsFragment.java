@@ -93,7 +93,7 @@ public class StatisticsFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+                //viewPager.setCurrentItem(tab.getPosition());
             }
         });
     }

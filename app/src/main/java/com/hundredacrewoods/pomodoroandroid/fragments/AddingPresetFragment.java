@@ -228,8 +228,7 @@ public class AddingPresetFragment extends Fragment
                     , shortInMillis, longInMillis, mInterval);
             mainActivity.getPomodoroViewModel().insertPreset(preset);
         }
-        //Log.d("Test", "Current time is: " + System.currentTimeMillis());
-        //mainActivity.getPomodoroViewModel().insertUserRecord(new UserRecord(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 1,1,1,6,2));
+        
         getFragmentManager().popBackStack();
     }
 

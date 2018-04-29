@@ -1,11 +1,8 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
-import android.arch.lifecycle.Observer;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +24,7 @@ import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class StatisticsFragmentDay extends Fragment {
 
@@ -119,34 +114,30 @@ public class StatisticsFragmentDay extends Fragment {
 
     public void addTimeLabel(){
         timeLabels = new ArrayList<>();
-        timeLabels.add("1.00am");
-        timeLabels.add("2.00am");
-        timeLabels.add("3.00am");
-        timeLabels.add("4.00am");
-        timeLabels.add("5.00am");
-        timeLabels.add("6.00am");
-        timeLabels.add("7.00am");
-        timeLabels.add("8.00am");
-        timeLabels.add("9.00am");
-        timeLabels.add("10.00am");
-        timeLabels.add("11.00am");
-        timeLabels.add("12.00pm");
-        timeLabels.add("13.00pm");
-        timeLabels.add("14.00pm");
-        timeLabels.add("15.00pm");
-        timeLabels.add("16.00pm");
-        timeLabels.add("17.00pm");
-        timeLabels.add("18.00pm");
-        timeLabels.add("19.00pm");
-        timeLabels.add("20.00pm");
-        timeLabels.add("21.000pm");
-        timeLabels.add("22.00pm");
-        timeLabels.add("23.00pm");
-        timeLabels.add("12.00pm");
-        timeLabels.add("13.000pm");
-        timeLabels.add("14.00pm");
-        timeLabels.add("00.00pm");
-
+        timeLabels.add("00.00");
+        timeLabels.add("01.00");
+        timeLabels.add("02.00");
+        timeLabels.add("03.00");
+        timeLabels.add("04.00");
+        timeLabels.add("05.00");
+        timeLabels.add("06.00");
+        timeLabels.add("07.00");
+        timeLabels.add("08.00");
+        timeLabels.add("09.00");
+        timeLabels.add("10.00");
+        timeLabels.add("11.00");
+        timeLabels.add("12.00");
+        timeLabels.add("13.00");
+        timeLabels.add("14.00");
+        timeLabels.add("15.00");
+        timeLabels.add("16.00");
+        timeLabels.add("17.00");
+        timeLabels.add("18.00");
+        timeLabels.add("19.00");
+        timeLabels.add("20.00");
+        timeLabels.add("21.00");
+        timeLabels.add("22.00");
+        timeLabels.add("23.00");
     }
 
     public void setDataOnLineChart(){
