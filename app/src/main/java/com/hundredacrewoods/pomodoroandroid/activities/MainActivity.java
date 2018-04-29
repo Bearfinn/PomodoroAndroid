@@ -2,6 +2,7 @@ package com.hundredacrewoods.pomodoroandroid.activities;
 
 import android.app.NotificationManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         return mPomodoroViewModel;
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_timer:
