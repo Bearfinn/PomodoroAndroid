@@ -60,6 +60,10 @@ public class PomodoroRepository {
         return mAllUserRecords;
     }
 
+    public void deleteAllUserRecords() {
+        new deleteAllUserRecordsAsyncTask(mUserRecordDao).execute();
+    }
+
     /*
         The following static class is for AsyncTask
         Instead of manipulating the database from the main thread which is prohibited by default,
@@ -119,6 +123,20 @@ public class PomodoroRepository {
         @Override
         protected Void doInBackground(final UserRecord... userRecords) {
             mAsyncUserRecordDao.insertUserRecord(userRecords);
+            return null;
+        }
+    }
+
+    private static class deleteAllUserRecordsAsyncTask extends AsyncTask<Void, Void, Void> {
+        private UserRecordDao mAsyncUserRecordDao;
+
+        public deleteAllUserRecordsAsyncTask(UserRecordDao mAsyncUserRecordDao) {
+            this.mAsyncUserRecordDao = mAsyncUserRecordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mAsyncUserRecordDao.deleteAllUserRecords();
             return null;
         }
     }

@@ -1,12 +1,15 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -15,6 +18,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
+import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -36,7 +41,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private SwitchPreferenceCompat mSoundPreference;
 
+    private Preference mHistoryPreference;
+
     private Context mContext;
+
+    private PomodoroViewModel mPomodoroViewModel;
 
     public SettingsFragment() {
         super();
@@ -60,6 +69,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle("Setting");
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
+        mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
     }
 
     @Override
@@ -71,6 +83,32 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mNotificationPreference = (SwitchPreferenceCompat) findPreference(PREF_NOTI);
         mSoundPreference = (SwitchPreferenceCompat) findPreference(PREF_SOUND);
         mVibratorPreference = (SwitchPreferenceCompat) findPreference(PREF_VIBE);
+        mHistoryPreference = findPreference(PREF_CLEAR_HIST);
+
+        mHistoryPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Delete history");
+                builder.setMessage("Are you sure to delete all history");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPomodoroViewModel.deleteAllUserRecords();
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+
+                builder.show();
+                return true;
+            }
+        });
 
         mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.
                 OnSharedPreferenceChangeListener() {
