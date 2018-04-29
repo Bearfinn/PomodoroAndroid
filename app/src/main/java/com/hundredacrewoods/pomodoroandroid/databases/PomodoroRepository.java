@@ -6,28 +6,30 @@ import android.os.AsyncTask;
 
 import com.hundredacrewoods.pomodoroandroid.TimestampRange;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
+
+/*
+    This class is the repository class. It is a ORM or Object Relation Model
+    It is used to handle the various data sources, such as, local db, remote db, etc.
+ */
 
 public class PomodoroRepository {
 
-    private PresetDao mPresetDao;
+    private PresetDao mPresetDao; //Dao instance for Preset
 
-    private UserRecordDao mUserRecordDao;
+    private UserRecordDao mUserRecordDao; //Dao instance for UserRecord
 
-    private LiveData<List<Preset>> mAllPresets;
+    private LiveData<List<Preset>> mAllPresets; //LiveData for the all presets in the list
 
-    private LiveData<List<UserRecord>> mSelectedUserRecords;
+    private LiveData<List<UserRecord>> mAllUserRecords; //LiveData for the all UserRecords in the list
 
-    private LiveData<TimestampRange> filterLiveData;
-
+    //Constructor for the Repository
     public PomodoroRepository(Application application) {
         PomodoroDatabase db = PomodoroDatabase.getInstance(application);
         mPresetDao = db.presetDao();
         mUserRecordDao = db.userRecordDao();
         mAllPresets = mPresetDao.selectAllPresets();
-        mSelectedUserRecords = mUserRecordDao.selectAllUserRecords();
+        mAllUserRecords = mUserRecordDao.selectAllUserRecords();
     }
 
     public LiveData<List<Preset>> getAllPresets() {
@@ -53,6 +55,16 @@ public class PomodoroRepository {
     public LiveData<List<UserRecord>> selectUserRecords (TimestampRange timestampRange) {
         return mUserRecordDao.selectUserRecords(timestampRange.getFrom(), timestampRange.getTo());
     }
+
+    public LiveData<List<UserRecord>> getAllUserRecords() {
+        return mAllUserRecords;
+    }
+
+    /*
+        The following static class is for AsyncTask
+        Instead of manipulating the database from the main thread which is prohibited by default,
+        using background thread to handle the data source is must implemented.
+     */
 
     private static class deletePresetAsyncTask extends AsyncTask<Integer, Void, Void> {
         private PresetDao mAsyncPresetDao;

@@ -27,6 +27,15 @@ import android.widget.TextView;
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
+
+import java.sql.Timestamp;
+
+
+/*
+    This fragment implements two listeners for retrieving the input from user
+    2 inputs are preset name and interval number
+ */
 
 public class AddingPresetFragment extends Fragment
         implements EditPresetNameFragment.EditPresetNameListener,
@@ -52,14 +61,13 @@ public class AddingPresetFragment extends Fragment
 
     private int mInterval;
 
+    //It is used to check this fragment is used for adding new preset or editing selected preset
     private boolean mIsEdit;
 
     private Preset mPreset;
 
     public AddingPresetFragment () {super();}
 
-
-    @SuppressWarnings("unused")
     public static AddingPresetFragment newInstance(Preset preset) {
         AddingPresetFragment fragment = new AddingPresetFragment();
         Bundle args = new Bundle();
@@ -77,11 +85,11 @@ public class AddingPresetFragment extends Fragment
             onRestoreInstanceState(savedInstanceState);
 
         setHasOptionsMenu(true);
-
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //This menu contains the save option
         inflater.inflate(R.menu.adding_preset_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -90,9 +98,13 @@ public class AddingPresetFragment extends Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home :
+                //If user click back button, it will pop the stack back to the view
                 getFragmentManager().popBackStack();
                 break;
             case R.id.adding_preset_save_button :
+                //If user click save, it will show the alert dialog for getting preset name from user input
+                //If this fragment is in editing mode, it will send the current preset name to the dialog
+                //otherwise, it will send "Preset 1"
                 EditPresetNameFragment editPresetNameFragment =
                         EditPresetNameFragment.newInstance(
                                 mIsEdit? mPreset.getPresetName() : "Preset 1");
@@ -110,15 +122,16 @@ public class AddingPresetFragment extends Fragment
                 false);
         initInstances(rootView, savedInstanceState);
 
+        //Set action bar
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mIsEdit ? mPreset.getPresetName() : "New Preset");
 
+        //If this fragment is in editing mode, it will set the progress bar and interval text view
         if(this.mIsEdit) {
             int focusMinute = (int) ((mPreset.getFocusInMillis() / 60) / 1000);
             int longMinute = (int) ((mPreset.getLongInMillis() / 60) / 1000);
             int shortMinute = (int) ((mPreset.getShortInMillis() / 60) / 1000);
-            int intervals = mPreset.getNumShortPerLong();
 
             int focusProgress = (focusMinute - 15) / 5;
             int longProgress = (longMinute - 5) / 5;
@@ -134,6 +147,7 @@ public class AddingPresetFragment extends Fragment
             mLongBreakAfterTextView.setText(mInterval + " intervals");
         }
 
+        //This will set Progress bar on change. If the progress bar has been changed, it will change the text view.
         mFocusTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -153,6 +167,7 @@ public class AddingPresetFragment extends Fragment
             }
         });
 
+        //This will set Progress bar on change. If the progress bar has been changed, it will change the text view.
         mShortBreakTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -172,6 +187,7 @@ public class AddingPresetFragment extends Fragment
             }
         });
 
+        //This will set Progress bar on change. If the progress bar has been changed, it will change the text view.
         mLongBreakTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -191,6 +207,7 @@ public class AddingPresetFragment extends Fragment
             }
         });
 
+        //This will show the alert dialog contains list view for interval selection
         mLongBreakAfterContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,6 +222,7 @@ public class AddingPresetFragment extends Fragment
         return rootView;
     }
 
+    //This method is the implemented method for the interface editPresetName listener
     @Override
     public void getSavedName(String name) {
         long focusInMillis = (mFocusTimeSeekBar.getProgress() * 5 + 15) * 60 * 1000;
@@ -219,18 +237,23 @@ public class AddingPresetFragment extends Fragment
             mPreset.setShortInMillis(shortInMillis);
             mPreset.setLongInMillis(longInMillis);
             mPreset.setNumShortPerLong(mInterval);
+
+            //This will update preset in the database
             mainActivity.getPomodoroViewModel().updatePreset(mPreset);
         } else {
             Preset preset = new Preset(name, focusInMillis
                     , shortInMillis, longInMillis, mInterval);
+
+            //This will insert preset into the database
             mainActivity.getPomodoroViewModel().insertPreset(preset);
         }
-
+        
         getFragmentManager().popBackStack();
     }
 
     @Override
     public void getSelectingInterval(int interval) {
+        //Set interval
         mInterval = interval;
         mLongBreakAfterTextView.setText(interval + " intervals");
     }

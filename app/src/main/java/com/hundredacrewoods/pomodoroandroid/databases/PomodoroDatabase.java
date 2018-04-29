@@ -6,6 +6,10 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+/*
+    This class is to create SQLite database instance using Room Persistent Library
+ */
+
 @Database(entities = {Preset.class, UserRecord.class}, version = 1)
 @TypeConverters({TimestampLongConverter.class})
 public abstract class PomodoroDatabase extends RoomDatabase {

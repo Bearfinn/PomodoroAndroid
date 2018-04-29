@@ -1,42 +1,36 @@
 package com.hundredacrewoods.pomodoroandroid.activities;
 
 import android.app.NotificationManager;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
-import com.hundredacrewoods.pomodoroandroid.databases.Preset;
-import com.hundredacrewoods.pomodoroandroid.fragments.AddingPresetFragment;
-import com.hundredacrewoods.pomodoroandroid.fragments.EditPresetNameFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.PresetFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.SettingsFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.StatisticsFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.TimerFragment;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
+<<<<<<< HEAD
     private TextView mTextMessage;
     private Fragment mContent;
+=======
+>>>>>>> acfe9a322e1d26cbf175ed1e01c30342d1f647a9
     private PomodoroViewModel mPomodoroViewModel;
     public PomodoroViewModel getPomodoroViewModel() {
         return mPomodoroViewModel;
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+<<<<<<< HEAD
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -66,6 +60,33 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+=======
+            = item -> {
+                switch (item.getItemId()) {
+                    case R.id.navigation_timer:
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame_fragmentholder, new TimerFragment())
+                                .commit();
+                        return true;
+                    case R.id.navigation_preset:
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame_fragmentholder, new PresetFragment())
+                                .commit();
+                        return true;
+                    case R.id.navigation_statistics:
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame_fragmentholder, new StatisticsFragment())
+                                .commit();
+                        return true;
+                    case R.id.navigation_settings:
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame_fragmentholder, new SettingsFragment())
+                                .commit();
+                        return true;
+                }
+                return false;
+            };
+>>>>>>> acfe9a322e1d26cbf175ed1e01c30342d1f647a9
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

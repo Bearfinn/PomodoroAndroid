@@ -16,13 +16,8 @@ import android.widget.Toast;
 
 import com.hundredacrewoods.pomodoroandroid.R;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
-@SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-//    TextView textView;
     public static final String PREF_NOTI = "notification_preference";
 
     public static final String PREF_SOUND = "sound_preference";
