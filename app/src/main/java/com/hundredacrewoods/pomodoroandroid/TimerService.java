@@ -20,6 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,17 +50,21 @@ public class TimerService extends Service {
 
     public IBinder mBinder;
     Messenger data;
+    boolean isServiceAlive;
 
     Queue<CurrentTime> currentTimeQueue;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            Log.wtf("TimerService", "Why null?");
+        }
         data = intent.getParcelableExtra("messenger");
         Log.d(LOG_TAG, "onStartCommand ran.");
         updateTimerThread = new UpdateTimerThread();
         updateTimerThread.start();
         //startForegroundService();
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -71,6 +77,7 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        isServiceAlive = false;
     }
 
     @Nullable
@@ -99,6 +106,14 @@ public class TimerService extends Service {
 
         isTimerRunning = false;
         currentTimeQueue = new LinkedList<>();
+        isServiceAlive = true;
+    }
+
+    public void changePreset(Preset preset) {
+        focusTime = (int) preset.getFocusInMillis();
+        shortBreakTime = (int) preset.getShortInMillis();
+        longBreakTime = (int) preset.getLongInMillis();
+        shortBreakPerLongBreak = preset.getNumShortPerLong();
     }
 
     private void startForegroundService()
@@ -182,7 +197,8 @@ public class TimerService extends Service {
     }
 
     public void resetTimer() {
-        countDownTimer.cancel();
+        if (countDownTimer != null)
+            countDownTimer.cancel();
         setTimerStatusParams(TimerService.Status.FOCUS);
         shortBreakCount = 0;
         isTimerRunning = false;
@@ -239,7 +255,7 @@ public class TimerService extends Service {
         public void run() {
             Log.d(LOG_TAG, "UpdateTimerThread called.");
             if (!isInterrupted()) {
-                while (true) {
+                while (isServiceAlive) {
                     Message msg = Message.obtain();
                     Bundle bundle = new Bundle();
                     bundle.putLong("currentTimeLeftInMillis", currentTimeLeftInMillis);

@@ -72,6 +72,7 @@ public class TimerFragment extends Fragment {
     int successCount, failureCount;
 
     Preset preset;
+    int presetPosition;
     TimerService timerService;
     boolean isBound;
 
@@ -258,11 +259,52 @@ public class TimerFragment extends Fragment {
                         adapter.addAll(presets);
                     }
                 });
-                builder.setSingleChoiceItems( adapter, 1, new DialogInterface.OnClickListener() {
+                builder.setSingleChoiceItems( adapter, presetPosition, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        preset = presets.get(i);
-                        dialogInterface.dismiss();
+                    public void onClick(DialogInterface dialogInterface1, int presetPos) {
+
+                        AlertDialog.Builder confirmChangePresetBuilder = new AlertDialog.Builder(getActivity());
+                        confirmChangePresetBuilder.setTitle("Change preset warning");
+                        confirmChangePresetBuilder.setMessage("Are you sure you want to change the preset?" +
+                                "The timer will be reset and statistics of the last cycle will be lost.");
+                        confirmChangePresetBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface confirmDialogInterface, int i) {
+                                preset = presets.get(presetPos);
+                                presetPosition = presetPos;
+                                presetNameTextView.setText(preset.getPresetName());
+
+                                Intent intent = new Intent(getActivity().getApplicationContext(), TimerService.class);
+                                if (timerService != null) {
+                                    timerService.resetTimer();
+                                    timerService.stopService(intent);
+                                }
+
+                                Messenger messenger = new Messenger(new IncomingHandler());
+                                Intent startIntent = new Intent(getActivity().getApplicationContext(), TimerService.class);
+                                startIntent.putExtra("messenger", messenger);
+                                getActivity().startService(startIntent);
+                                timerService.changePreset(preset);
+                                confirmDialogInterface.dismiss();
+                            }
+                        });
+
+                        confirmChangePresetBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface confirmDialogInterface, int i) {
+                                confirmDialogInterface.cancel();
+                            }
+                        });
+
+                        confirmChangePresetBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface confirmDialogInterface) {
+                                dialogInterface1.dismiss();
+                            }
+                        });
+
+                        AlertDialog confirmChangePresetDialog = confirmChangePresetBuilder.create();
+                        confirmChangePresetBuilder.show();
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -282,6 +324,8 @@ public class TimerFragment extends Fragment {
         isJustStarted = true;
         successCount = 0;
         failureCount = 0;
+
+        presetPosition = 0;
 
         Messenger messenger = new Messenger(new IncomingHandler());
         Intent intent = new Intent(getActivity().getApplicationContext(), TimerService.class);

@@ -14,6 +14,7 @@ import android.support.v7.preference.PreferenceManager;
 import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.TimerService;
 import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 import com.hundredacrewoods.pomodoroandroid.fragments.PresetFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.SettingsFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.StatisticsFragment;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     TimerService.Status currentStatus;
     long currentTimeLeftInMillis;
     boolean isTimerRunning;
+    Preset preset;
 
     private PomodoroViewModel mPomodoroViewModel;
     public PomodoroViewModel getPomodoroViewModel() {
