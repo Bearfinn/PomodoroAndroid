@@ -65,10 +65,6 @@ public class StatisticsFragmentDay extends Fragment {
         });
         mPomodoroViewModel.setFilterSearch(TimestampRange.
                 getTimestampRange(TimestampRange.TODAY, new Timestamp(System.currentTimeMillis())));
-//        loadData();
-//        addTimeLabel();
-//        setDataOnLineChart();
-//        setCustomizationOnBarChart();
         return rootView;
     }
 
