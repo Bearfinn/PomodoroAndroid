@@ -6,13 +6,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Handler;
+import android.os.Parcel;
 import android.os.SystemClock;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -110,6 +116,16 @@ public class TimerFragment extends Fragment {
                 }
                 case SHORT_BREAK: {
                     if (isAfterStatusChangeToBreak) {
+                        Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                        vibrator.vibrate(1000);
+
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                            Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         if (isPausedBeforeBreak) {
                             failureCount++;
                             isPausedBeforeBreak = false;
