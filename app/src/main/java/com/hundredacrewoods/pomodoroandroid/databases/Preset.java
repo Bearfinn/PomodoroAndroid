@@ -92,4 +92,9 @@ public class Preset {
     public void setLongInMillis(long mLongInMillis) {
         this.mLongInMillis = mLongInMillis;
     }
+
+    @Override
+    public String toString() {
+        return this.mPresetName;
+    }
 }

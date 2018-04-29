@@ -1,7 +1,9 @@
 package com.hundredacrewoods.pomodoroandroid.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -13,11 +15,16 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -25,9 +32,12 @@ import com.hundredacrewoods.pomodoroandroid.R;
 import com.hundredacrewoods.pomodoroandroid.TimerService;
 import com.hundredacrewoods.pomodoroandroid.activities.MainActivity;
 import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
+import com.hundredacrewoods.pomodoroandroid.databases.Preset;
 import com.hundredacrewoods.pomodoroandroid.databases.UserRecord;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("unused")
@@ -55,6 +65,7 @@ public class TimerFragment extends Fragment {
     int cycleCount, shortBreakCount;
     int successCount, failureCount;
 
+    Preset preset;
     TimerService timerService;
     boolean isBound;
 
@@ -160,6 +171,7 @@ public class TimerFragment extends Fragment {
         }
 
         mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -202,6 +214,43 @@ public class TimerFragment extends Fragment {
         isTimerRunning = (boolean) savedInstanceState.get("isTimerRunning");
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.change_preset_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.change_preset_button:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Select Preset");
+                List<Preset> presets = new ArrayList<Preset>();
+
+                ArrayAdapter adapter = new ArrayAdapter<Preset>(getContext(), android.R.layout.simple_list_item_single_choice, presets);
+//                PresetTimerAdapter adapter = new PresetTimerAdapter(getContext());
+                mPomodoroViewModel.getAllPresets().observe(getActivity(), new Observer<List<Preset>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Preset> presets) {
+                        adapter.clear();
+                        adapter.addAll(presets);
+                    }
+                });
+                builder.setSingleChoiceItems( adapter, 1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        preset = presets.get(i);
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
         currentTimeLeftInMillis = 0;
@@ -209,6 +258,7 @@ public class TimerFragment extends Fragment {
 
         //isTimerRunning = false;
         isPausedBeforeBreak = false;
+        isJustStarted = true;
         successCount = 0;
         failureCount = 0;
 
