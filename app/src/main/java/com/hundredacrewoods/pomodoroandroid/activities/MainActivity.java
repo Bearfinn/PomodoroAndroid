@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
 import com.hundredacrewoods.pomodoroandroid.R;
+import com.hundredacrewoods.pomodoroandroid.TimerService;
 import com.hundredacrewoods.pomodoroandroid.databases.PomodoroViewModel;
 import com.hundredacrewoods.pomodoroandroid.fragments.PresetFragment;
 import com.hundredacrewoods.pomodoroandroid.fragments.SettingsFragment;
@@ -21,6 +22,9 @@ import com.hundredacrewoods.pomodoroandroid.fragments.TimerFragment;
 public class MainActivity extends AppCompatActivity {
 
     private Fragment mContent;
+    TimerService.Status currentStatus;
+    long currentTimeLeftInMillis;
+    boolean isTimerRunning;
 
     private PomodoroViewModel mPomodoroViewModel;
     public PomodoroViewModel getPomodoroViewModel() {
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_timer:
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame_fragmentholder, new TimerFragment())
+                                .replace(R.id.frame_fragmentholder, TimerFragment.newInstance(currentTimeLeftInMillis, currentStatus, isTimerRunning))
                                 .commit();
                         return true;
                     case R.id.navigation_preset:
@@ -94,5 +98,13 @@ public class MainActivity extends AppCompatActivity {
         //Save the fragment's instance
         if (mContent != null)
             getSupportFragmentManager().putFragment(outState, "TimerFragment", mContent);
+    }
+
+    public void setTimerRunning(boolean timerRunning) {
+        this.isTimerRunning = timerRunning;
+    }
+
+    public boolean getTimerRunning() {
+        return this.isTimerRunning;
     }
 }

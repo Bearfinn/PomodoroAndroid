@@ -77,6 +77,9 @@ public class TimerFragment extends Fragment {
 
     private PomodoroViewModel mPomodoroViewModel;
 
+    /**
+     * Create connection to TimerService
+     */
     ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -96,6 +99,9 @@ public class TimerFragment extends Fragment {
 
     //endregion
 
+    /**
+     * Handle the data sent from TimerService
+     */
     class IncomingHandler extends Handler
     {
         @Override
@@ -142,8 +148,6 @@ public class TimerFragment extends Fragment {
         }
     }
 
-    Button mVibe;
-
     public static TimerFragment newInstance() {
         TimerFragment fragment = new TimerFragment();
         Bundle args = new Bundle();
@@ -185,7 +189,7 @@ public class TimerFragment extends Fragment {
             currentStatus = (TimerService.Status) getArguments().getSerializable("currentStatus");
             isTimerRunning = getArguments().getBoolean("isTimerRunning");
         }
-
+        isTimerRunning = ((MainActivity) getActivity()).getTimerRunning();
         mPomodoroViewModel = ((MainActivity) getActivity()).getPomodoroViewModel();
         setHasOptionsMenu(true);
     }
@@ -212,6 +216,7 @@ public class TimerFragment extends Fragment {
             getActivity().unbindService(mServiceConnection);
             isBound = false;
         }
+        ((MainActivity) getActivity()).setTimerRunning(isTimerRunning);
     }
 
     @Override
@@ -290,9 +295,6 @@ public class TimerFragment extends Fragment {
         timerStatusTextView = rootView.findViewById(R.id.timerStatus_textView);
         timerTextView = rootView.findViewById(R.id.timer_textView);
         startButton = rootView.findViewById(R.id.start_button);
-        if (isTimerRunning) {
-            startButton.setText(R.string.start_button_pause_text);
-        }
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -315,6 +317,11 @@ public class TimerFragment extends Fragment {
                 skipPhase();
             }
         });
+        if (isTimerRunning) {
+            startButton.setText(R.string.start_button_pause_text);
+            resetButton.setEnabled(true);
+            skipButton.setEnabled(true);
+        }
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_timer);
     }
 
